@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">จอง</div>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/manage-student.html">Manage Students</a>
+        <a href="/manage-admin.html">Manage Admin</a>
+        <a href="/manage-contact.html">Manage Contact</a>
+        <a href="/admin.html">Logout</a>
+    </div>
+    <div class="main">
+        <h2>List of administrators</h2>
+
+        <table class="admin-list" id="adminTable">
+            <tr>
+                <th>No.</th>
+                <th>Username</th>
+                <th>email</th>
+                <th>password</th>
+                <th>edit</th>
+                <th>delete</th>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+async function loadAdmins() {
+    const res = await fetch(window.apiUrl('/api/getAdmins'));
+    const data = await res.json();
+
+    if (!data.success) return;
+
+    const table = document.getElementById('adminTable');
+
+    // ลบข้อมูลเก่า
+    table.innerHTML = `
+        <tr>
+            <th>No.</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    `;
+
+    data.admins.forEach((admin, index) => {
+
+        table.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${admin.username}</td>
+                <td>${admin.email}</td>
+                <td>${admin.password}</td>
+                <td>
+                    <button onclick="editAdmin(${admin.id}, '${admin.username}', '${admin.email}', '${admin.password}')">✏️</button>
+                </td>
+                <td>
+                    <button onclick="deleteAdmin(${admin.id})">🗑️</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+
+async function deleteAdmin(id) {
+
+    if (!confirm("ต้องการลบจริงไหม?")) return;
+
+    const res = await fetch(window.apiUrl('/api/deleteAdmin/' + id), {
+        method: 'DELETE'
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        alert("ลบสำเร็จ");
+        loadAdmins();
+    }
+}
+
+
+async function editAdmin(id, username, email, password) {
+
+    const newUsername = prompt("แก้ Username:", username);
+    if (!newUsername) return;
+
+    const newEmail = prompt("แก้ Email:", email);
+    if (!newEmail) return;
+
+    const newPassword = prompt("แก้ Password:", password);
+    if (!newPassword) return;
+
+    const res = await fetch(window.apiUrl('/api/updateAdmin/' + id), {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: newUsername,
+            email: newEmail,
+            password: newPassword
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        alert("แก้ไขสำเร็จ");
+        loadAdmins();
+    }
+}
+
+loadAdmins();
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>สมัครสมาชิก</title>
+    <link rel="stylesheet" href="Project.css">
+    <link rel="stylesheet" href="loginadmin.css">
+</head>
+<body style="background: #f4f6f9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+
+    <div class="login-container">
+        <h2 style="color: #4f46e5; margin-bottom: 20px;">สมัครสมาชิก</h2>
+        <input type="text" id="reg_student_id" placeholder="รหัสนักศึกษา">
+        <input type="text" id="reg_name" placeholder="ชื่อ - นามสกุล">
+        <input type="password" id="reg_password" placeholder="รหัสผ่าน">
+        
+        <button class="admin-loginBtn" id="btnRegister">สมัครสมาชิก</button>
+        <a href="user-login.html" class="goBackk" style="display: block; margin-top: 15px; color: #666; font-size: 14px; text-decoration: none;">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
+        <br>
+        <a href="index.html" style="font-size: 12px; color: gray;">กลับหน้าหลัก</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="config.js"></script>
+    <script>
+        // ถ้าหน้าเว็บโหลดโค้ดสำเร็จ บรรทัดนี้จะไปโชว์หลังบ้าน
+        console.log("✅ โหลดสคริปต์หน้าสมัครสมาชิกสำเร็จ!");
+
+        document.getElementById('btnRegister').addEventListener('click', async () => {
+            console.log("👉 ปุ่มสมัครถูกกดแล้ว!"); // เช็คว่าปุ่มเชื่อมต่อสำเร็จ
+            
+            const student_id = document.getElementById('reg_student_id').value.trim();
+            const name = document.getElementById('reg_name').value.trim();
+            const password = document.getElementById('reg_password').value.trim();
+
+            if(!student_id || !name || !password) {
+                Swal.fire({ icon: 'warning', title: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+                return;
+            }
+
+            try {
+                const res = await fetch(window.apiUrl('/api/register'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ student_id, name, password })
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: data.message }).then(() => {
+                        window.location.href = '/user-login.html'; 
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'ไม่สามารถสมัครได้', text: data.message });
+                }
+            } catch(err) {
+                console.error("❌ Error ตอนส่งข้อมูล:", err);
+                Swal.fire({ icon: 'error', title: 'หาเซิร์ฟเวอร์ไม่เจอ', text: "ลองเช็คว่าเปิด node login.js หรือยัง?" });
+            }
+        });
+    </script>
+</body>
+</html>
