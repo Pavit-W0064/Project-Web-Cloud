@@ -38,7 +38,7 @@
          <h1>Ready to จอง</h1>
          
          <div style="display: flex; gap: 15px; margin-top: 20px;">
-             <a href="/user-login.html" id="hero-book-btn" class="bth-slide">เข้าสู่ระบบเพื่อจองห้อง</a>
+             <a href="#" id="hero-book-btn" class="bth-slide">จองห้อง</a>
              <a href="/queue.html" class="bth-slide" style="background: #6c757d;">ดูตารางการจอง</a>
          </div>
     </div>
@@ -64,33 +64,34 @@
                 <button id="main-logout-btn" class="btn-nav" style="background: #ef4444; border: none; cursor: pointer; color: white;">ออกจากระบบ</button>
             `;
 
-            // 2. เปลี่ยนปุ่มกลางจอ ให้พุ่งตรงไปหน้าจองได้เลย
-            heroBookBtn.textContent = "ไปที่หน้าจองห้องสมุด";
-            heroBookBtn.href = "/booking.html";
-
-            // 3. ทำให้ปุ่มออกจากระบบใช้งานได้จริง
-            document.getElementById('main-logout-btn').addEventListener('click', () => {
-                Swal.fire({
-                    title: 'ต้องการออกจากระบบ?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'ออกจากระบบ',
-                    cancelButtonText: 'ยกเลิก'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // ล้างข้อมูลผู้ใช้ออก
-                        localStorage.removeItem('currentUser');
-                        
-                        // รีเฟรชหน้าเว็บ 1 รอบ เพื่อให้ปุ่มกลับไปเป็นแบบเดิม
-                        window.location.reload(); 
-                    }
+                // 2. ปุ่ม "จองห้อง" ให้ไปหน้าจอง
+                heroBookBtn.href = "/booking.html";
+                heroBookBtn.addEventListener('click', () => {
+                    window.location.href = '/booking.html';
                 });
-            });
-        }
-    });
-</script>
 
-</body>
-</html>
+                // 3. ทำให้ปุ่มออกจากระบบใช้งานได้จริง
+                document.getElementById('main-logout-btn').addEventListener('click', () => {
+                    Swal.fire({
+                        title: 'ต้องการออกจากระบบ?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'ออกจากระบบ',
+                        cancelButtonText: 'ยกเลิก'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // ล้างข้อมูลผู้ใช้ออก
+                            localStorage.removeItem('currentUser');
+                            
+                            // รีเฟรชหน้าเว็บ 1 รอบ เพื่อให้ปุ่มกลับไปเป็นแบบเดิม
+                            window.location.reload(); 
+                        }
+                    });
+                });
+            } else {
+                // ถ้าไม่ login ให้ปุ่มไปหน้า login
+                heroBookBtn.href = "/user-login.html";
+                heroBookBtn.addEventListener('click', () => {
+                    window.location.href = '/user-login.html';

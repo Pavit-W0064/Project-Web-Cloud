@@ -182,7 +182,7 @@
         <div class="hero-content" id="hero-text">
             <h4 id="slide-subtitle">Welcome to LibraryBooking</h4>
             <h1 id="slide-title">You can booking now.</h1>
-            <button class="btn-explore" onclick="window.location.href='user-login.html'">เข้าสู่ระบบเพื่อจองห้อง</button>
+            <button class="btn-explore" id="hero-book-btn">คลิกเพื่อจองห้อง</button>
             <button class="btn-explore2" onclick="window.location.href='/queue.html'" >ดูตารางการจอง</button>
             
         </div>
@@ -199,14 +199,19 @@
         function updateAuthSection() {
             const currentUser = localStorage.getItem('currentUser');
             const navAuthSection = document.getElementById('nav-auth-section');
+            const heroBookBtn = document.getElementById('hero-book-btn');
             
             if (currentUser) {
                 const user = JSON.parse(currentUser);
                 navAuthSection.innerHTML = `
                     <span style="color: #4f46e5; font-weight: 600;">ยินดีต้อนรับ ${user.name}</span>
-                    <a href="/booking.html" class="btn-nav">จองห้อง</a>
                     <button class="btn-nav" style="background: #e74c3c; border: none; cursor: pointer;" onclick="logout()">ออกจากระบบ</button>
                 `;
+                heroBookBtn.textContent = 'คลิกเพื่อจองห้อง';
+                heroBookBtn.onclick = () => window.location.href = '/booking.html';
+            } else {
+                heroBookBtn.textContent = 'เข้าสู่ระบบเพื่อจอง';
+                heroBookBtn.onclick = () => window.location.href = '/user-login.html';
             }
         }
 
