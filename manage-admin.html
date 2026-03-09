@@ -21,7 +21,9 @@
     </div>
     <div class="main">
         <h2>List of administrators</h2>
-        <button onclick="addAdmin()">➕ Add Admin</button>
+        <input type="text" id="searchAdmin" placeholder="Search username..." onkeyup="searchAdmin()">
+        <button class="btn-add" onclick="addAdmin()">➕ Add Admin</button>
+        
 
         <table class="admin-list" id="adminTable">
             <tr>
@@ -158,6 +160,25 @@ async function editAdmin(id, username, email, password) {
     }
 }
 
+function searchAdmin() {
+
+    const input = document.getElementById("searchAdmin").value.toLowerCase();
+    const rows = document.querySelectorAll("#adminTable tr");
+
+    rows.forEach((row, index) => {
+
+        if (index === 0) return;
+
+        const username = row.children[1].textContent.toLowerCase();
+
+        if (username.includes(input)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+}
 loadAdmins();
 </script>
 </body>
