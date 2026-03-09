@@ -192,7 +192,32 @@
         </div>
     </header>
 
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // ตรวจสอบและแสดงสถานะล็อกอิน
+        function updateAuthSection() {
+            const currentUser = localStorage.getItem('currentUser');
+            const navAuthSection = document.getElementById('nav-auth-section');
+            
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                navAuthSection.innerHTML = `
+                    <span style="color: #4f46e5; font-weight: 600;">ยินดีต้อนรับ ${user.name}</span>
+                    <a href="/booking.html" class="btn-nav">จองห้อง</a>
+                    <button class="btn-nav" style="background: #e74c3c; border: none; cursor: pointer;" onclick="logout()">ออกจากระบบ</button>
+                `;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '/index.html';
+        }
+
+        // เรียก function เมื่อหน้า load
+        window.addEventListener('DOMContentLoaded', updateAuthSection);
+
         // 1. ข้อมูลรูปภาพและข้อความที่จะเปลี่ยน (Array of Objects)
         const slides = [
             {

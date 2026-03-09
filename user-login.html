@@ -37,7 +37,7 @@
                 // เก็บข้อมูล User ลงในเบราว์เซอร์ เพื่อให้หน้าจองรู้ว่าใครล็อกอิน
                 localStorage.setItem('currentUser', JSON.stringify(data.user));
                 
-                window.location.href = '/booking.html'; // ล็อกอินผ่าน เด้งไปหน้าจอง
+                window.location.href = '/index.html'; // ล็อกอินผ่าน เด้งไปหน้าหลัก
             } else {
                 Swal.fire({ icon: 'error', title: 'ล็อกอินล้มเหลว', text: data.message });
             }
