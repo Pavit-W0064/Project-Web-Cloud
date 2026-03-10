@@ -3,6 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const db = require("./db");
 const app = express();
+const session = require("express-session");
 
 // โหลด .env (ให้ใช้ได้ทั้ง localhost และ EC2)
 require('dotenv').config({ path: path.join(__dirname, '.env') });

@@ -12,7 +12,7 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo">จอง</div>
+        <div class="logo">ระบบหลังบ้าน</div>
         <a href="/dashboard.html">Dashboard</a>
         <a href="/manage-student.html">Manage Students</a>
         <a href="/manage-admin.html">Manage Admin</a>
@@ -20,7 +20,7 @@
         <a href="/admin.html">Logout</a>
     </div>
     <div class="main">
-        <h2>List of administrators</h2>
+        <h2>List of Administrators</h2>
         <input type="text" id="searchAdmin" placeholder="Search username..." onkeyup="searchAdmin()">
         <button class="btn-add" onclick="addAdmin()">➕ Add Admin</button>
         
@@ -36,15 +36,42 @@
             </tr>
         </table>
     </div>
+        <div id='editModal' class='modal'>
+            <div class="modal-box">
+                <h3>Edit Admin</h3>
+
+                <label>Username</label>
+                <input type='text' id='editUsername'>
+
+                <label>Email</label>
+                <input type="text" id='editEmail'>
+
+                <label>Password</label>
+                <input type="text" id="editPassword">
+
+                <div class="modal-buttons">
+                    <button onclick="closeModal()">Cancel</button>
+                    <button onclick="saveEdit()">Save</button>
+                </div>
+            </div>
+        </div>
+    
 </div>
 
 <script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+
+let currentEditId = null;
+let adminsData = [];
+
 async function loadAdmins() {
     const res = await fetch(window.apiUrl('/api/getAdmins'));
     const data = await res.json();
 
     if (!data.success) return;
+    
+    adminsData = data.admins;
 
     const table = document.getElementById('adminTable');
 
@@ -69,7 +96,7 @@ async function loadAdmins() {
                 <td>${admin.email}</td>
                 <td>${admin.password}</td>
                 <td>
-                    <button onclick="editAdmin(${admin.id}, '${admin.username}', '${admin.email}', '${admin.password}')">✏️</button>
+                    <button onclick="editAdmin('${admin.id}')">✏️</button>
                 </td>
                 <td>
                     <button onclick="deleteAdmin(${admin.id})">🗑️</button>
@@ -129,35 +156,83 @@ async function addAdmin() {
     }
 }
 
-async function editAdmin(id, username, email, password) {
+function editAdmin(id){
 
-    const newUsername = prompt("แก้ Username:", username);
-    if (!newUsername) return;
+    const admin = adminsData.find(a => a.id === Number(id));
 
-    const newEmail = prompt("แก้ Email:", email);
-    if (!newEmail) return;
+    if(!admin){
+        alert("ไม่พบข้อมูล admin");
+        return;
+    }
 
-    const newPassword = prompt("แก้ Password:", password);
-    if (!newPassword) return;
+    currentEditId = admin.id;
 
-    const res = await fetch(window.apiUrl('/api/updateAdmin/' + id), {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
+    document.getElementById("editUsername").value = admin.username;
+    document.getElementById("editEmail").value = admin.email;
+    document.getElementById("editPassword").value = admin.password;
+
+    document.getElementById("editModal").style.display = "flex";
+
+}
+
+
+
+function closeModal(){
+
+    document.getElementById("editModal").style.display = "none";
+
+}
+
+
+
+async function saveEdit(){
+
+    const username = document.getElementById("editUsername").value;
+    const email = document.getElementById("editEmail").value;
+    const password = document.getElementById("editPassword").value;
+
+    const res = await fetch(window.apiUrl('/api/updateAdmin/'+currentEditId),{
+
+        method:'PUT',
+
+        headers:{
+            'Content-Type':'application/json'
         },
-        body: JSON.stringify({
-            username: newUsername,
-            email: newEmail,
-            password: newPassword
+
+        body:JSON.stringify({
+            username,
+            email,
+            password
         })
+
     });
 
     const data = await res.json();
 
-    if (data.success) {
-        alert("แก้ไขสำเร็จ");
+    if(data.success){
+
+        Swal.fire({
+            icon: 'success',
+            title: 'แก้ไขสำเร็จ',
+            text: 'ข้อมูล Admin ถูกอัปเดตแล้ว',
+            confirmButtonColor: '#2563eb'
+        });
+
+        closeModal();
+
         loadAdmins();
+
+    }else{
+
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถแก้ไขข้อมูลได้'
+        });
+
+        
     }
+
 }
 
 function searchAdmin() {
@@ -180,6 +255,9 @@ function searchAdmin() {
     });
 }
 loadAdmins();
+
+
 </script>
+
 </body>
 </html>
