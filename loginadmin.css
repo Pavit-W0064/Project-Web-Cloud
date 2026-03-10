@@ -26,6 +26,7 @@ body {
 
 
 .admin-loginBtn {
+    display:block;
     width: 100%;
     padding: 10px;
     background: #007bff;
@@ -33,6 +34,7 @@ body {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    margin: 15px auto 0;
 }
 
 .admin-loginBtn:hover {
@@ -41,7 +43,7 @@ body {
 
 .goBack{
     display:block;
-    width:280px;
+    width: 100%;
     padding: 10px;
     background: #FF4500;
     color: white;
@@ -49,6 +51,8 @@ body {
     cursor: pointer;
     border: none;
     margin: 15px auto 0;
+    text-decoration: none;   /* ⭐ เพิ่ม */
+    text-align: center;      /* ⭐ เพิ่ม */
 }
 
 .goBack:hover {
