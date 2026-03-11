@@ -48,12 +48,22 @@ body {
 }
 
 .btn-nav {
-    background: #4f46e5;
-    color: white;
-    padding: 8px 18px;
-    border-radius: 20px;
-    text-decoration: none;
+    background:#4f46e5;
+    color:white;
+    padding:10px 20px;
+    border-radius:20px;
+    text-decoration:none;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    height:38px;      /* บังคับความสูง */
+    font-size:14px;
+
+    border:1px solid transparent;  /* เพิ่มบรรทัดนี้ */
 }
+
 
 .hero {
     position: relative;
@@ -107,4 +117,16 @@ body {
 .btn-register, 
 .btn-login { /* ถ้าปุ่มเข้าสู่ระบบคุณใช้ class อื่น ให้แก้ตรงนี้ด้วยนะครับ */
     font-family: 'Poppins', sans-serif;
+}
+
+.btn-outline{
+    background:white;
+    color:#4f46e5;
+    border:1px solid #4f46e5;
+}
+
+#nav-auth-section{
+    display:flex;
+    gap:15px;
+    align-items:center;
 }

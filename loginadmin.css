@@ -167,3 +167,34 @@ body {
 .goBack:hover {
     background: red
 }
+
+.nav-buttons{
+    display:flex;
+    gap:10px;
+}
+
+/* ปุ่มหลัก */
+.btn-nav{
+    padding:10px 18px;
+    border-radius:6px;
+    font-size:14px;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:38px;
+}
+
+/* สีปุ่ม */
+
+.btn-gray{
+    background:#6c757d;
+    color:white;
+}
+
+.btn-red{
+    background:#ef4444;
+    color:white;
+    border:none;
+    cursor:pointer;
+}

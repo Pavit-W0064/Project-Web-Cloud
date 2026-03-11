@@ -235,6 +235,7 @@ body {
     height:420px;
     display:flex;
     flex-direction:column;
+    overflow:hidden;
 }
 
 .graphBox:hover{
@@ -249,14 +250,14 @@ body {
 }
 
 .graphBox canvas{
-    max-width:100%;
-    max-height:100%;
+    flex:1;
+    max-height:320px;
 }
 
 /* card KPI */
 .cards{
     display:grid;
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns: repeat(3,1fr);
     gap:20px;
 }
 
@@ -270,10 +271,12 @@ body {
 .card h2{
     font-size:32px;
     margin-bottom:5px;
+    color:#3b82f6;
 }
 
 .card p{
     color:#777;
+    font-size:14px;
 }
 
 /* responsive */
@@ -285,6 +288,15 @@ body {
     .cards{
         grid-template-columns: 1fr 1fr;
     }
+}
+
+.logo img{
+    width:150px;
+    height:auto;
+}
+
+.graphBox{
+    transition: all .25s ease;
 }
 
 /* -------------------------------==================================== ----------------------------------*/

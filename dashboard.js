@@ -20,32 +20,39 @@ async function loadDashboard(){
 }
 
 // =============================
-// 🎨 สีมาตรฐาน Dashboard
+// 🎨 สี Dashboard
 // =============================
 const colors = [
-    "#ff6384",
-    "#36a2eb",
-    "#4bc0c0",
-    "#ffcd56",
-    "#9966ff",
-    "#ff9f40",
-    "#2ecc71",
-    "#e74c3c"
+    "#6366F1",
+    "#22C55E",
+    "#EF4444",
+    "#f59e0b",
+    "#06B6D4",
+    "#8b5cf6",
+    "#14b8a6",
+    "#f97316"
 ];
 
 // =============================
 // 📊 โหลดกราฟทั้งหมด
 // =============================
 async function loadCharts(){
-    try {
+
+    try{
+
         const res = await fetch(window.apiUrl('/api/dashboard-chart'));
         const data = await res.json();
 
         // =====================
         // 📊 การจองตามวัน
         // =====================
-        let dateLabels = Object.keys(data.byDate || {});
-        let dateValues = Object.values(data.byDate || {});
+        let dateData = Object.entries(data.byDate || {});
+
+        // เรียงวันที่
+        dateData.sort((a,b)=> new Date(a[0]) - new Date(b[0]));
+
+        let dateLabels = dateData.map(d=>d[0]);
+        let dateValues = dateData.map(d=>d[1]);
 
         if(dateLabels.length === 0){
             dateLabels = ["ยังไม่มีข้อมูล"];
@@ -53,30 +60,31 @@ async function loadCharts(){
         }
 
         if(bookingChart) bookingChart.destroy();
-        bookingChart = new Chart(document.getElementById("myChart"), {
-            type: "bar",
-            data: {
-                labels: dateLabels,
-                datasets: [{
-                    label: "จำนวนการจองต่อวัน",
-                    data: dateValues,
-                    backgroundColor: colors,
-                    borderRadius: 8,
-                    borderWidth: 0
+
+        bookingChart = new Chart(document.getElementById("myChart"),{
+            type:"bar",
+            data:{
+                labels:dateLabels,
+                datasets:[{
+                    label:"จำนวนการจองต่อวัน",
+                    data:dateValues,
+                    backgroundColor:colors,
+                    borderRadius:8
                 }]
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{display:true}
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: "#eee" }
+                scales:{
+                    y:{
+                        beginAtZero:true,
+                        grid:{color:"#eee"}
                     },
-                    x: {
-                        grid: { display: false }
+                    x:{
+                        grid:{display:false}
                     }
                 }
             }
@@ -94,20 +102,25 @@ async function loadCharts(){
         }
 
         if(roomChart) roomChart.destroy();
-        roomChart = new Chart(document.getElementById("popularCategory"), {
-            type: "doughnut",
-            data: {
-                labels: roomLabels,
-                datasets: [{
-                    data: roomValues,
-                    backgroundColor: colors,
-                    borderWidth: 0
+
+        roomChart = new Chart(document.getElementById("popularCategory"),{
+            type:"doughnut",
+            data:{
+                labels:roomLabels,
+                datasets:[{
+                    data:roomValues,
+                    backgroundColor:colors,
+                    borderWidth:0
                 }]
             },
-            options: {
-                cutout: "65%",
-                plugins: {
-                    legend: { position: "top" }
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                cutout:"65%",
+                plugins:{
+                    legend:{
+                        position:"bottom"
+                    }
                 }
             }
         });
@@ -116,9 +129,22 @@ async function loadCharts(){
         // ⏰ การจองตามช่วงเวลา
         // =====================
         const timeCanvas = document.getElementById("timeChart");
+
         if(timeCanvas){
-            let timeLabels = Object.keys(data.byTime || {});
-            let timeValues = Object.values(data.byTime || {});
+
+            let timeData = Object.entries(data.byTime || {});
+
+            // เรียงตามเวลาเริ่ม
+            timeData.sort((a,b)=>{
+
+                const getStart = (t)=> t.split("-")[0].trim();
+
+                return getStart(a[0]).localeCompare(getStart(b[0]));
+
+            });
+
+            let timeLabels = timeData.map(t=>t[0]);
+            let timeValues = timeData.map(t=>t[1]);
 
             if(timeLabels.length === 0){
                 timeLabels = ["ยังไม่มีข้อมูล"];
@@ -126,35 +152,40 @@ async function loadCharts(){
             }
 
             if(timeChart) timeChart.destroy();
-            timeChart = new Chart(timeCanvas, {
-                type: "bar",
-                data: {
-                    labels: timeLabels,
-                    datasets: [{
-                        label: "จำนวนการจองตามช่วงเวลา",
-                        data: timeValues,
-                        backgroundColor: colors,
-                        borderRadius: 8
+
+            timeChart = new Chart(timeCanvas,{
+                type:"bar",
+                data:{
+                    labels:timeLabels,
+                    datasets:[{
+                        label:"จำนวนการจองตามช่วงเวลา",
+                        data:timeValues,
+                        backgroundColor:colors,
+                        borderRadius:8
                     }]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: "#eee" }
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    scales:{
+                        y:{
+                            beginAtZero:true,
+                            grid:{color:"#eee"}
                         },
-                        x: {
-                            grid: { display: false }
+                        x:{
+                            grid:{display:false}
                         }
                     }
                 }
             });
+
         }
 
-    } catch(err){
-        console.log("โหลดกราฟไม่สำเร็จ:", err);
     }
+    catch(err){
+        console.log("โหลดกราฟไม่สำเร็จ:",err);
+    }
+
 }
 
 // =============================
@@ -163,8 +194,9 @@ async function loadCharts(){
 loadDashboard();
 loadCharts();
 
-// รีเฟรชอัตโนมัติ
-setInterval(() => {
+// รีเฟรชทุก 5 วินาที
+setInterval(()=>{
     loadDashboard();
     loadCharts();
-}, 5000);
+},5000);
+

@@ -482,6 +482,7 @@ app.get('/api/dashboard-chart', (req, res) => {
     const sql = `
         SELECT subject AS room, date, message AS timeSlot
         FROM queue_contact
+        ORDER BY date ASC
     `;
 
     db.query(sql, (err, result) => {
@@ -490,6 +491,17 @@ app.get('/api/dashboard-chart', (req, res) => {
         const bookingByDate = {};
         const bookingByRoom = {};
         const bookingByTime = {};
+
+
+        result.sort((a,b)=>{
+            const getHour = (t)=>{
+                if(!t) return 0
+                let start = t.split("-")[0].trim()
+                return parseInt(start.split(":")[0])
+            }
+
+            return getHour(a.timeSlot) - getHour(b.timeSlot)
+        });
 
         result.forEach(b => {
             bookingByDate[b.date] = (bookingByDate[b.date] || 0) + 1;
