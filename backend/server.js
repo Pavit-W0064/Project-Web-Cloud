@@ -26,6 +26,10 @@ app.use(cors({
   credentials: true,
 }));
 
+
+const frontendPath = path.join(__dirname, "../frontend");
+console.log("Frontend path:", frontendPath);
+
 app.use(express.static(frontendPath));
 
 app.get("/", (req, res) => {
@@ -50,7 +54,7 @@ app.post('/checkLoginAdminData', (req, res) => {
         if (result.length > 0) {
             res.json({
                 checkAdmin: true,
-                page: "/dashboard.html"
+                page: "dashboard.html"
             });
         } else {
             res.json({
