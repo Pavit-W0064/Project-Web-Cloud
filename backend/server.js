@@ -26,8 +26,11 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(frontendPath));
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
 
 // ==========================================
 // 1. ADMIN LOGIN (เชื่อม MySQL)
