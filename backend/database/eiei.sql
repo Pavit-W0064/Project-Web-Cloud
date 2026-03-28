@@ -24,6 +24,12 @@ CREATE TABLE IF NOT EXISTS `queue_students`(
     PRIMARY KEY (`id`)
 );
 
+INSERT INTO queue_students (student_id, username, password) VALUES
+('6604053620027', 'หริรักษ์ ตึกประโคน', '1234'),
+('6604053610064', 'ภวิศ วสุธาสวัสดิ์', '1234'),
+('6604053630553', 'ฮัยดัร ดีแม', '1234'),
+('6604053630171', 'นราธิป รื่นยาน', '1234');
+
 -- Add a small test account if none exists (safe to run multiple times)
 INSERT INTO queue_students (student_id, username, password)
 SELECT 'test123', 'Test User', '1234'
