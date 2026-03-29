@@ -3,182 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คำถามที่พบบ่อย (FAQs) - LibraryBooking</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/faqs_style.css">
+    <title>FAQs - LibraryBooking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-         /* --- Top Bar & Navbar (เหมือนเดิม) --- */
-        .top-bar { background-color: #4361ee; color: white; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-        .top-bar-left { display: flex; align-items: center; font-weight: 700; font-size: 1.1rem; }
-        .top-bar-left i { margin-right: 8px; font-size: 1.4rem; }
-        .top-bar-right { display: flex; gap: 20px; align-items: center; }
-        .social-icons i { margin-left: 10px; cursor: pointer; background: white; color: #4361ee; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center; font-size: 0.8rem; }
-        
-        .navbar { background-color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; z-index: 10; }
-        .nav-links { list-style: none; display: flex; gap: 25px; }
-        .nav-links a { text-decoration: none; color: #555; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; transition: color 0.3s; }
-        .nav-links a:hover { color: #4361ee; }
-        .btn-register { background-color: #4361ee; color: white; padding: 10px 25px; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; transition: background 0.3s; }
-        .btn-register:hover { background-color: #304ffe; }
-
-
-        
-    /* CSS สำหรับ Footer โดยเฉพาะ */
-    .site-footer {
-        background-color: #4361ee; /* สีน้ำเงินตามรูปต้นฉบับ */
-        color: white;
-        padding: 20px 20px;
-        font-family: 'Sarabun', sans-serif; /* ใช้ฟอนต์ Sarabun */
-    }
-
-    .footer-container {
-        max-width: 1350px;
-        margin: 0 auto; /* จัดกึ่งกลางหน้าจอ */
-        /* หรือถ้าอยากให้ชิดซ้ายเหมือนในรูปเป๊ะๆ ให้ลบ margin: 0 auto; ออกแล้วใส่ padding-left แทน */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .footer-title {
-        font-size: 1.25rem; /* ประมาณ 20px */
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    .footer-info p {
-        margin-bottom: 12px;
-        line-height: 1.6;
-        font-size: 1rem;
-        font-weight: 300;
-    }
-
-    .footer-info a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .footer-info a:hover {
-        text-decoration: underline;
-    }
-
-    /* จัดการการตัดคำของที่อยู่ให้เหมือนรูป */
-    .address-line {
-        display: block;
-    }
-    </style>
     
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #304ffe;
+            --text-dark: #333333;
+            --text-light: #f4f4f4;
+            --danger-color: #ff4757;
+        }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Prompt', sans-serif; 
+        }
+        
+        body { background-color: #f8f9fa; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* =========================================
+           Header & Navbar (Dark Glass Theme)
+           ========================================= */
+        .main-header {
+            position: absolute; top: 0; left: 0; width: 100%; z-index: 1000;
+            animation: slideDownFade 0.8s ease-out forwards;
+        }
+
+        @keyframes slideDownFade {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .top-bar { 
+            background-color: rgba(15, 23, 42, 0.4); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            color: rgba(255, 255, 255, 0.9); padding: 8px 5%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 0.85rem; font-weight: 300;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .top-bar-right { display: flex; gap: 20px; align-items: center; }
+        .top-bar-right span { display: flex; align-items: center; gap: 5px; }
+
+        .navbar { 
+            background-color: rgba(15, 23, 42, 0.3); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        .logo { font-size: 1.6rem; font-weight: 700; color: white; letter-spacing: 0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { 
+            text-decoration: none; color: rgba(255, 255, 255, 0.9); font-weight: 500; font-size: 0.95rem; 
+            position: relative; transition: all 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
+            background-color: white; transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: white; transform: translateY(-2px); }
+        .nav-links a:hover::after { width: 100%; }
+
+        #nav-auth-section { display: flex; align-items: center; gap: 15px; }
+        .btn-nav { padding: 8px 20px; border-radius: 50px; font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+        .btn-glass-outline { color: white; border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.1); text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .btn-glass-outline:hover { background: white; color: var(--text-dark); text-shadow: none; box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+        .btn-glass-danger { color: white; border: 1px solid rgba(255, 71, 87, 0.6); background: rgba(255, 71, 87, 0.2); }
+        .btn-glass-danger:hover { background: var(--danger-color); box-shadow: 0 0 15px rgba(255, 71, 87, 0.5); }
+
+        /* =========================================
+           Hero Banner 
+           ========================================= */
+        .faq-banner {
+            position: relative;
+            height: 400px; 
+            width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: url('../assets/images/backimg3.jpg') no-repeat center center/cover;
+            text-align: center;
+        }
+
+        .faq-banner::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.4));
+            z-index: 1;
+        }
+
+        .banner-content {
+            position: relative; z-index: 2; color: white; padding: 0 20px; margin-top: 50px;
+            animation: slideUpFade 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .banner-content h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .banner-content p { font-size: 1.15rem; color: #cbd5e1; font-weight: 300; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        /* =========================================
+           FAQ Section (Accordion)
+           ========================================= */
+        .faq-section {
+            padding: 80px 5%;
+            background-color: #f8f9fa;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+            
+            /* Animation สำหรับ Scroll Reveal */
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .faq-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            padding: 20px 25px;
+            background: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .faq-question:hover {
+            background-color: #f8f9ff;
+            color: var(--primary-color);
+        }
+
+        .faq-icon {
+            font-size: 1rem;
+            color: var(--primary-color);
+            transition: transform 0.4s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-item.active .faq-question {
+            color: var(--primary-color);
+            background-color: #f8f9ff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .faq-answer {
+            max-height: 0; /* ซ่อนเนื้อหาเริ่มต้น */
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            background-color: white;
+        }
+
+        .faq-answer-inner {
+            padding: 20px 25px;
+            color: #64748b;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* =========================================
+           Call to Action (CTA)
+           ========================================= */
+        .cta-section {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid #e2e8f0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .cta-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cta-section h3 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .cta-section p {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.6);
+        }
+
+        /* =========================================
+           Footer 
+           ========================================= */
+        .site-footer {
+            background-color: #111827; color: #d1d5db; padding: 50px 5%; margin-top: 20px;
+        }
+        .footer-container {
+            max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .footer-title { font-size: 1.5rem; font-weight: 600; color: white; margin-bottom: 20px; }
+        .footer-info p { margin-bottom: 10px; line-height: 1.6; font-size: 0.95rem; font-weight: 300; }
+        .footer-info a { color: #818cf8; text-decoration: none; transition: color 0.3s; }
+        .footer-info a:hover { color: white; }
+        .social-links { margin-top: 20px; font-size: 1.2rem; }
+        .social-links a { margin: 0 10px; color: #d1d5db; transition: color 0.3s;}
+        .social-links a:hover { color: white; transform: translateY(-3px); display: inline-block;}
+    </style>
 </head>
 <body>
 
-    
-<div class="top-bar">
-    <div class="top-bar-left">
-        
+<audio id="uiClickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+<header class="main-header">
+    <div class="top-bar">
+        <div class="top-bar-left"></div>
+        <div class="top-bar-right">
+            <span><i class="fa-solid fa-location-dot"></i> KMUTNB, Thailand</span> | 
+            <span><i class="fa-solid fa-envelope"></i> library@gmail.com</span> | 
+            <span><i class="fa-solid fa-phone"></i> 012-345-6789</span>
+        </div>
     </div>
-    <div class="top-bar-right">
-        📍 KMUTNB, Thailand | 📧 library@gmail.com | 📞 012-345-6789
+
+    <nav class="navbar">
+        <div class="logo">LibraryBooking</div>
+
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="faqs.html" style="color: white;">FAQs</a></li> <li><a href="contact.html">Contact</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+
+        <div id="nav-auth-section">
+            <a href="register.html" class="btn-nav btn-glass-outline">สมัครสมาชิก</a>
+            <a href="user-login.html" class="btn-nav" style="background: var(--primary-color); color: white; box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+</header>
+
+<section class="faq-banner">
+    <div class="banner-content">
+        <h1>คำถามที่พบบ่อย (FAQs)</h1>
+        <p>รวบรวมคำตอบสำหรับทุกข้อสงสัยเกี่ยวกับการใช้งานระบบจองห้องสมุด เพื่อให้คุณใช้งานได้อย่างราบรื่นที่สุด</p>
     </div>
-</div>
+</section>
 
-<nav class="navbar">
-    <div class="logo">LibraryBooking</div>
-
-    <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="faqs.html">Faqs</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="admin.html">Admin</a></li>
-    </ul>
-
-    <div id="nav-auth-section" style="display: flex; gap: 15px; align-items: center;">
-        <a href="/pages/register.html" class="btn-nav" style="background: white; color: #4f46e5; border: 1px solid #4f46e5;">สมัครสมาชิก</a>
-        <a href="/pages/user-login.html" class="btn-nav">เข้าสู่ระบบ</a>
-    </div>
-</nav>
-
-
-
+<section class="faq-section">
     <div class="faq-container">
-        <h2>คำถามที่พบบ่อย (FAQs)</h2>
-        <p class="faq-subtitle">รวบรวมคำตอบสำหรับข้อสงสัยในการจองห้องสมุด</p>
-
-        <div class="accordion">
-            <div class="accordion-item">
-                <button class="accordion-header">
-                    สามารถจองห้องสมุดล่วงหน้าได้กี่วัน?
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="accordion-content">
-                    <p>นักศึกษาสามารถจองห้องอ่านหนังสือล่วงหน้าได้สูงสุด 7 วันทำการ ผ่านระบบ LibraryBooking ของเราครับ</p>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-header">   
-                    หากจองไว้แล้วแต่ไปไม่ได้ จะยกเลิกได้อย่างไร?
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="accordion-content">
-                    <p>คุณสามารถยกเลิกการจองได้โดยเข้าสู่ระบบ ไปที่เมนู "ดูตารางการจอง" และกดยกเลิกในรายการที่ต้องการ (กรุณายกเลิกล่วงหน้าอย่างน้อย 1 ชั่วโมง)</p>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-header">
-                    บุคคลภายนอกสามารถจองห้องได้หรือไม่?
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="accordion-content">
-                    <p>ขออภัยครับ ปัจจุบันระบบ LibraryBooking สงวนสิทธิ์การใช้งานเฉพาะนักศึกษาและบุคลากรที่มีรหัสประจำตัวของสถาบันเท่านั้น</p>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-header">
-                    หากมาใช้ห้องสายเกินเวลาที่จองไว้ จะเกิดอะไรขึ้น?
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="accordion-content">
-                    <p>หากผู้จองไม่มาแสดงตัวที่ห้องภายใน 15 นาทีหลังจากถึงเวลาที่จองไว้ ระบบจะทำการยกเลิกการจองนั้นอัตโนมัติ เพื่อให้สิทธิ์แก่ผู้ใช้งานท่านอื่นครับ</p>
-                </div>
-            </div>
-        </div>
         
-        <div class="faq-footer">
-            <p>ไม่พบคำถามที่คุณสงสัยใช่ไหม? โปรดติดต่อฝ่ายสนับสนุนที่ <a href="#">bidkomkom@gmail.com</a></p>
+        <div class="faq-item reveal-card">
+            <button class="faq-question">
+                ต้องทำอย่างไรหากต้องการจองห้องอ่านหนังสือ?
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">
+                    คุณต้องทำการ "สมัครสมาชิก" ด้วยรหัสนักศึกษาก่อน จากนั้นให้เข้าสู่ระบบ แล้วไปที่หน้าจองห้อง เลือกห้องและช่วงเวลาที่ว่าง แล้วกดยืนยันการจอง รอเจ้าหน้าที่อนุมัติก็สามารถเข้าใช้งานได้เลยครับ
+                </div>
+            </div>
         </div>
+
+        <div class="faq-item reveal-card">
+            <button class="faq-question">
+                สามารถยกเลิกการจองได้หรือไม่?
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">
+                    สามารถยกเลิกได้ครับ โดยเข้าไปที่เมนู "ดูตารางการจอง" หากคิวไหนเป็นคิวของคุณ จะมีปุ่ม "ยกเลิก" ปรากฏขึ้นมา สามารถกดยกเลิกเพื่อคืนสิทธิ์ห้องให้เพื่อนๆ คนอื่นได้เลยครับ
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item reveal-card">
+            <button class="faq-question">
+                จองห้องล่วงหน้าได้กี่วัน?
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">
+                    ปัจจุบันระบบเปิดให้จองล่วงหน้าได้สูงสุด 7 วัน เพื่อให้การกระจายสิทธิ์การใช้ห้องเป็นไปอย่างทั่วถึงสำหรับนักศึกษาทุกคนครับ
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item reveal-card">
+            <button class="faq-question">
+                หากลืมรหัสผ่านต้องทำอย่างไร?
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">
+                    เบื้องต้นคุณสามารถติดต่อบรรณารักษ์หรือผู้ดูแลระบบ (Admin) ที่เคาน์เตอร์ห้องสมุด หรือส่งอีเมลมาที่ library@gmail.com พร้อมแนบรูปถ่ายบัตรนักศึกษาเพื่อยืนยันตัวตนครับ
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <script src="../js/faqs_script.js"></script>
-
+    <div class="cta-section reveal-element">
+        <h3>ยังมีข้อสงสัยเพิ่มเติมใช่ไหม?</h3>
+        <p>หากคุณไม่พบคำตอบที่ต้องการ สามารถติดต่อสอบถามเจ้าหน้าที่ได้โดยตรงครับ</p>
+        <a href="contact.html" class="btn-primary"><i class="fa-regular fa-comment-dots"></i> ติดต่อเรา</a>
+    </div>
+</section>
 
 <footer class="site-footer">
     <div class="footer-container">
-        <div class="footer-title">สำนักหอสมุดกลาง</div>
-        
+        <div class="footer-title">สำนักหอสมุดกลาง มจพ.</div>
         <div class="footer-info">
-            <p>
-                1518 ถนนประชาราษฎร์ 1 แขวงวงศ์สว่าง
-                เขตบางซื่อ กรุงเทพฯ 10800
-            </p>
-            
-            <p>Tel : 0-2555-2000 ต่อ 2147</p>
-            
-            <p>Email : <a href="mailto:info@lib.kmutnb.ac.th">info@lib.kmutnb.ac.th</a></p>
-            
-            <p>
-                <a href="https://www.facebook.com/Central.Library.Kmutnb" target="_blank">
-                    www.facebook.com/Central.Library.Kmutnb
+            <p>1518 ถนนประชาราษฎร์ 1 แขวงวงศ์สว่าง เขตบางซื่อ กรุงเทพฯ 10800</p>
+            <p><i class="fa-solid fa-phone"></i> Tel : 0-2555-2000 ต่อ 2147</p>
+            <p><i class="fa-solid fa-envelope"></i> Email : <a href="mailto:info@lib.kmutnb.ac.th">info@lib.kmutnb.ac.th</a></p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/Central.Library.Kmutnb" target="_blank" title="Facebook">
+                    <i class="fa-brands fa-facebook"></i>
                 </a>
-            </p>
+            </div>
         </div>
     </div>
 </footer>
 
+<script>
+    // --- ระบบเล่นเสียงคลิก ---
+    const clickSound = document.getElementById('uiClickSound');
+    clickSound.volume = 0.3;
+
+    function playClickEffect() {
+        clickSound.currentTime = 0; 
+        clickSound.play().catch(e => console.log("Audio play blocked"));
+    }
+
+    // --- ระบบ Accordion (ยืด-หด คำถาม) ---
+    function initAccordion() {
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const questionBtn = item.querySelector('.faq-question');
+            
+            questionBtn.addEventListener('click', () => {
+                // เล่นเสียงตอนกด
+                playClickEffect();
+
+                // ตรวจสอบว่ากล่องนี้เปิดอยู่หรือไม่
+                const isActive = item.classList.contains('active');
+                
+                // ปิดทุกกล่องก่อน (ถ้าอยากให้เปิดได้ทีละกล่อง)
+                faqItems.forEach(otherItem => {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.faq-answer').style.maxHeight = null;
+                });
+
+                // ถ้ากล่องเดิมไม่ได้เปิดอยู่ ให้กางออก
+                if (!isActive) {
+                    item.classList.add('active');
+                    const answer = item.querySelector('.faq-answer');
+                    // กำหนดความสูงตามเนื้อหาจริง (scrollHeight) เพื่อให้อนิเมชันสมูท
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                }
+            });
+        });
+    }
+
+    // --- Scroll Animation ---
+    function checkReveal() {
+        const triggerBottom = window.innerHeight / 5 * 4.5;
+
+        const ctaElement = document.querySelector('.reveal-element');
+        if(ctaElement && ctaElement.getBoundingClientRect().top < triggerBottom) {
+            ctaElement.classList.add('visible');
+        }
+
+        const cards = document.querySelectorAll('.reveal-card');
+        cards.forEach((card, index) => {
+            if(card.getBoundingClientRect().top < triggerBottom) {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 150); 
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const interactiveElements = document.querySelectorAll('a, .btn-primary');
+        interactiveElements.forEach(el => {
+            el.addEventListener('click', playClickEffect);
+        });
+
+        initAccordion();
+        updateAuthSection();
+        checkReveal();
+    });
+
+    window.addEventListener('scroll', checkReveal);
+
+    // ตรวจสอบสถานะล็อกอิน
+    function updateAuthSection() {
+        const currentUser = localStorage.getItem('currentUser');
+        const navAuthSection = document.getElementById('nav-auth-section');
+        
+        if (currentUser) {
+            const user = JSON.parse(currentUser);
+            navAuthSection.innerHTML = `
+                <span style="color: white; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.5);"><i class="fa-regular fa-circle-user"></i> ยินดีต้อนรับ, ${user.name}</span>
+                <button class="btn-nav btn-glass-danger" onclick="logout()">ออกจากระบบ</button>
+            `;
+        } else {
+            navAuthSection.innerHTML = `
+                <a href="register.html" class="btn-nav btn-glass-outline">สมัครสมาชิก</a>
+                <a href="user-login.html" class="btn-nav" style="background: var(--primary-color); color: white; box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);">เข้าสู่ระบบ</a>
+            `;
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUser');
+        window.location.href = '../index.html';
+    }
+</script>
 
 </body>
 </html>

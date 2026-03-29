@@ -1,27 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สมัครสมาชิก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/Project.css">
     <link rel="stylesheet" href="../css/loginadmin.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        /* ตั้งค่าพื้นหลังเป็นรูปภาพ เพื่อให้เอฟเฟกต์กระจกทำงาน */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            /* ใช้รูปเดียวกับหน้า Login หรือเปลี่ยนเป็นรูปอื่นก็ได้ครับ */
+            background: url('../assets/images/backimg1.jpg') no-repeat center center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* แผ่นฟิล์มสีดำโปร่งแสง คลุมทับรูปภาพพื้นหลัง */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* --- เอฟเฟกต์ Liquid Glass (Glassmorphism) --- */
+        .login-container {
+            position: relative;
+            z-index: 2; 
+            
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); 
+            
+            border-radius: 20px;
+            padding: 40px 35px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            
+            /* อนิเมชั่นเด้งขึ้นมาแบบ Pop-up */
+            animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        @keyframes popUp {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .login-container h2 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #ffffff; 
+            letter-spacing: 1px;
+        }
+
+        /* ปรับแต่งช่อง Input ให้เข้ากับสไตล์กระจก */
+        .login-container input {
+            width: 100%;
+            padding: 14px 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .login-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .login-container input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        /* ปุ่มสมัครสมาชิก */
+        .admin-loginBtn {
+            width: 100%;
+            padding: 14px;
+            background-color: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .admin-loginBtn:hover {
+            background-color: #304ffe;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+        }
+
+        /* ลิงก์ด้านล่าง */
+        .links-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .links-container a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .links-container a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body style="background: #f4f6f9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+<body>
 
     <div class="login-container">
-        <h2 style="color: #4f46e5; margin-bottom: 20px;">สมัครสมาชิก</h2>
+        <h2>สมัครสมาชิก</h2>
         <input type="text" id="reg_student_id" placeholder="รหัสนักศึกษา">
         <input type="text" id="reg_name" placeholder="ชื่อ - นามสกุล">
         <input type="password" id="reg_password" placeholder="รหัสผ่าน">
         
         <button class="admin-loginBtn" id="btnRegister">สมัครสมาชิก</button>
-        <a href="/pages/user-login.html" class="goBackk" style="display: block; margin-top: 15px; color: #666; font-size: 14px; text-decoration: none;">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
-        <br>
-        <a href="/" style="font-size: 12px; color: gray;">กลับหน้าหลัก</a>
+        
+        <div class="links-container">
+            <a href="/pages/user-login.html">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
+            <a href="/" style="font-size: 0.85rem; opacity: 0.7;">กลับหน้าหลัก</a>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../js/config.js"></script>
+    <script src="../js/config.js"></script>
     <script>
         // ถ้าหน้าเว็บโหลดโค้ดสำเร็จ บรรทัดนี้จะไปโชว์หลังบ้าน
         console.log("✅ โหลดสคริปต์หน้าสมัครสมาชิกสำเร็จ!");
@@ -34,7 +171,11 @@
             const password = document.getElementById('reg_password').value.trim();
 
             if(!student_id || !name || !password) {
-                Swal.fire({ icon: 'warning', title: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+                Swal.fire({ 
+                    icon: 'warning', 
+                    title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                    confirmButtonColor: '#4361ee'
+                });
                 return;
             }
 
@@ -47,15 +188,30 @@
                 const data = await res.json();
 
                 if(data.success) {
-                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: data.message }).then(() => {
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: 'สำเร็จ!', 
+                        text: data.message,
+                        confirmButtonColor: '#4361ee'
+                    }).then(() => {
                         window.location.href = '/pages/user-login.html'; 
                     });
                 } else {
-                    Swal.fire({ icon: 'error', title: 'ไม่สามารถสมัครได้', text: data.message });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'ไม่สามารถสมัครได้', 
+                        text: data.message,
+                        confirmButtonColor: '#4361ee'
+                    });
                 }
             } catch(err) {
                 console.error("❌ Error ตอนส่งข้อมูล:", err);
-                Swal.fire({ icon: 'error', title: 'หาเซิร์ฟเวอร์ไม่เจอ', text: "ลองเช็คว่าเปิด backend/server.js และฐานข้อมูลแล้วหรือยัง?" });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'หาเซิร์ฟเวอร์ไม่เจอ', 
+                    text: "ลองเช็คว่าเปิด backend/server.js และฐานข้อมูลแล้วหรือยัง?",
+                    confirmButtonColor: '#4361ee'
+                });
             }
         });
     </script>

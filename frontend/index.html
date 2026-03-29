@@ -5,325 +5,649 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibraryBooking</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/home_style.css">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: #f4f4f4; }
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #304ffe;
+            --text-dark: #333333;
+            --text-light: #f4f4f4;
+            --danger-color: #ff4757;
+        }
 
-        /* --- Top Bar & Navbar (เหมือนเดิม) --- */
-        .top-bar { background-color: #4361ee; color: white; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-        .top-bar-left { display: flex; align-items: center; font-weight: 700; font-size: 1.1rem; }
-        .top-bar-left i { margin-right: 8px; font-size: 1.4rem; }
-        .top-bar-right { display: flex; gap: 20px; align-items: center; }
-        .social-icons i { margin-left: 10px; cursor: pointer; background: white; color: #4361ee; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center; font-size: 0.8rem; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Prompt', sans-serif; 
+        }
         
-        .navbar { background-color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; z-index: 10; }
-        .nav-links { list-style: none; display: flex; gap: 25px; }
-        .nav-links a { text-decoration: none; color: #555; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; transition: color 0.3s; }
-        .nav-links a:hover { color: #4361ee; }
-        .btn-register { background-color: #4361ee; color: white; padding: 10px 25px; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; transition: background 0.3s; }
-        .btn-register:hover { background-color: #304ffe; }
+        body { background-color: #f8f9fa; overflow-x: hidden; }
 
-        /* --- Hero Section (ปรับปรุงใหม่) --- */
+        /* --- Header Container --- */
+        .main-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            animation: slideDownFade 0.8s ease-out forwards;
+        }
+
+        @keyframes slideDownFade {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Top Bar --- */
+        .top-bar { 
+            background-color: rgba(15, 23, 42, 0.4); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: rgba(255, 255, 255, 0.9); 
+            padding: 8px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 0.85rem; 
+            font-weight: 300;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .top-bar-left { display: flex; align-items: center; }
+        .top-bar-right { display: flex; gap: 20px; align-items: center; }
+        .top-bar-right span { display: flex; align-items: center; gap: 5px; }
+
+        /* --- Navbar --- */
+        .navbar { 
+            background-color: rgba(15, 23, 42, 0.3); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { 
+            text-decoration: none; 
+            color: rgba(255, 255, 255, 0.9); 
+            font-weight: 500; 
+            font-size: 0.95rem; 
+            position: relative;
+            transition: all 0.3s; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: white; transform: translateY(-2px); }
+        .nav-links a:hover::after { width: 100%; }
+
+        #nav-auth-section { display: flex; align-items: center; gap: 15px; }
+        
+        .btn-nav {
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .btn-glass-outline {
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.1);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .btn-glass-outline:hover {
+            background: white;
+            color: var(--text-dark);
+            text-shadow: none;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        .btn-glass-danger {
+            color: white;
+            border: 1px solid rgba(255, 71, 87, 0.6);
+            background: rgba(255, 71, 87, 0.2);
+        }
+        .btn-glass-danger:hover {
+            background: var(--danger-color);
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
+        }
+
+        /* --- Hero Section --- */
         .hero {
             position: relative;
-            height: 600px;
+            height: 80vh;
+            min-height: 600px;
             width: 100%;
             display: flex;
             align-items: center;
-            padding: 0 5%;
+            padding: 0 8%;
             overflow: hidden;
-            /* พื้นหลังเริ่มต้น */
-            background-color: #333; 
-            transition: background-image 0.5s ease-in-out; /* ทำให้ภาพเปลี่ยนนุ่มนวล */
+            background-color: #222; 
+            transition: background-image 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             background-size: cover;
             background-position: center;
         }
 
-        /* Overlay สีดำทับภาพ เพื่อให้อ่านตัวหนังสือออก */
         .hero::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 100%);
             z-index: 1;
         }
 
         .hero-content {
             position: relative;
-            z-index: 2; /* ให้อยู่เหนือ Overlay */
+            z-index: 2; 
             color: white;
-            max-width: 600px;
-            /* เพิ่ม Animation ตอนเปลี่ยน slide */
-            transition: opacity 0.3s ease;
+            max-width: 650px;
+            margin-top: 50px; 
+            margin-left: 50px; 
+            transition: opacity 0.5s ease, transform 0.5s ease;
             opacity: 1;
+            transform: translateY(0);
         }
 
-        /* Class สำหรับซ่อนข้อความชั่วคราวตอนเปลี่ยน slide */
         .fade-out {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+        }
+
+        .animate-up {
+            animation: slideUpFade 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
             opacity: 0;
         }
 
-        .hero-content h4 { font-size: 1.2rem; font-weight: 500; margin-bottom: 10px; }
-        .hero-content h1 { font-size: 3.5rem; font-weight: 700; line-height: 1.2; margin-bottom: 25px; }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .btn-explore { background-color: #4361ee; color: white; padding: 12px 30px; border: none; border-radius: 5px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.2s; }
-        .btn-explore:hover { transform: translateY(-2px); }
+        .hero-content h4 { 
+            font-size: 1.2rem; 
+            font-weight: 300; 
+            margin-bottom: 10px; 
+            color: #e0e7ff;
+            letter-spacing: 1px;
+        }
+        .hero-content h1 { 
+            font-size: 3.2rem; 
+            font-weight: 700; 
+            line-height: 1.2; 
+            margin-bottom: 30px; 
+            text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
 
-        .btn-explore2 { background-color: #7f7f7f; color: rgb(255, 255, 255); padding: 12px 30px; border: none; border-radius: 5px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.2s; }
-        .btn-explore2:hover { transform: translateY(-2px); }
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-explore { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%);
+            color: white; 
+            padding: 12px 30px; 
+            border: none; 
+            border-radius: 50px; 
+            font-weight: 500; 
+            font-size: 1.05rem; 
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .btn-explore:hover { 
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.6);
+        }
+
+        .btn-explore2 { 
+            background-color: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(8px);
+            color: white; 
+            padding: 12px 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            border-radius: 50px; 
+            font-weight: 500; 
+            font-size: 1.05rem; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .btn-explore2:hover { 
+            background-color: rgba(255, 255, 255, 0.2); 
+            border-color: white;
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
 
         .arrow {
             position: absolute;
             top: 50%;       
             transform: translateY(-50%);
             width: 50px; height: 50px;
-            background-color: rgba(67, 97, 238, 0.8);
+            background-color: rgba(0, 0, 0, 0.3); 
+            backdrop-filter: blur(8px);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
             cursor: pointer;
             font-size: 1.2rem;
-            transition: background 0.3s;
-            z-index: 10; /* ให้ปุ่มอยู่บนสุดเสมอ */
-            user-select: none; /* ห้ามเลือกข้อความบนปุ่ม */
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10; 
         }
-        .arrow:hover { background-color: rgba(67, 97, 238, 1); }
-        .arrow-left { left: 20px; }
-        .arrow-right { right: 20px; }
+        .arrow:hover { 
+            background-color: rgba(67, 97, 238, 0.8); 
+            border-color: transparent;
+            transform: translateY(-50%) scale(1.15);
+        }
+        .arrow-left { left: 2%; } 
+        .arrow-right { right: 2%; }
+
+        /* =========================================
+           How it works Section (เพิ่มใหม่ตรงนี้)
+           ========================================= */
+        .how-it-works {
+            padding: 100px 5%;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .hiw-header {
+            margin-bottom: 60px;
+        }
+
+        .hiw-header span {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+        }
+
+        .hiw-header h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .hiw-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap; /* เผื่อหน้าจอมือถือให้หล่นลงมาบรรทัดใหม่ */
+        }
+
+        .hiw-card {
+            flex: 1;
+            min-width: 280px;
+            background: #f8f9fa;
+            padding: 40px 30px;
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            /* z-index เพื่อไม่ให้โดนเงาทับผิดจังหวะ */
+            z-index: 1; 
+        }
+
+        .hiw-card:hover {
+            transform: translateY(-15px);
+            background: white;
+            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.1);
+            border-color: rgba(67, 97, 238, 0.1);
+            z-index: 2;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .hiw-icon {
+            width: 90px;
+            height: 90px;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 25px;
+            transition: all 0.4s ease;
+        }
+
+        .hiw-card:hover .hiw-icon {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .hiw-card h3 {
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .hiw-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
 
 
+        /* Responsive เผื่อสำหรับจอมือถือ */
+        @media (max-width: 768px) {
+            .hero-content { margin-left: 0; text-align: center; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-buttons { justify-content: center; flex-wrap: wrap; }
+            .arrow { display: none; } 
+            .nav-links { display: none; } 
+            .hiw-container { flex-direction: column; align-items: center; }
+            .hiw-card { width: 100%; max-width: 400px; }
+        }
 
-
-    /* CSS สำหรับ Footer โดยเฉพาะ */
-    .site-footer {
-        background-color: #4361ee; /* สีน้ำเงินตามรูปต้นฉบับ */
-        color: white;
-        padding: 20px 20px;
-        font-family: 'Sarabun', sans-serif; /* ใช้ฟอนต์ Sarabun */
-    }
-
-    .footer-container {
-        max-width: 1350px;
-        margin: 0 auto; /* จัดกึ่งกลางหน้าจอ */
-        /* หรือถ้าอยากให้ชิดซ้ายเหมือนในรูปเป๊ะๆ ให้ลบ margin: 0 auto; ออกแล้วใส่ padding-left แทน */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .footer-title {
-        font-size: 1.25rem; /* ประมาณ 20px */
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    .footer-info p {
-        margin-bottom: 12px;
-        line-height: 1.6;
-        font-size: 1rem;
-        font-weight: 300;
-    }
-
-    .footer-info a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .footer-info a:hover {
-        text-decoration: underline;
-    }
-
-    /* จัดการการตัดคำของที่อยู่ให้เหมือนรูป */
-    .address-line {
-        display: block;
-    }
-
-
-
+        /* --- Footer --- */
+        .site-footer {
+            background-color: #111827;
+            color: #d1d5db;
+            padding: 40px 5%;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .footer-title {
+            font-size: 1.4rem; 
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .footer-info p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            font-weight: 300;
+        }
+        .footer-info a {
+            color: #818cf8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-info a:hover { color: white; }
+        .social-links { margin-top: 15px; font-size: 1.2rem; }
+        .social-links a { margin: 0 10px; color: #d1d5db; transition: color 0.3s;}
+        .social-links a:hover { color: white; transform: translateY(-3px); display: inline-block;}
     </style>
 </head>
 <body>
 
+<audio id="uiClickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
 
-<div class="top-bar">
-    <div class="top-bar-left">
+<header class="main-header">
+    <div class="top-bar">
+        <div class="top-bar-left"></div>
+        <div class="top-bar-right">
+            <span><i class="fa-solid fa-location-dot"></i> KMUTNB, Thailand</span> | 
+            <span><i class="fa-solid fa-envelope"></i> library@gmail.com</span> | 
+            <span><i class="fa-solid fa-phone"></i> 012-345-6789</span>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">LibraryBooking</div>
+
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="pages/about.html">About</a></li>
+            <li><a href="pages/faqs.html">FAQs</a></li>
+            <li><a href="pages/contact.html">Contact</a></li>
+            <li><a href="pages/admin.html">Admin</a></li>
+        </ul>
+
+        <div id="nav-auth-section">
+            <a href="pages/register.html" class="btn-nav btn-glass-outline">สมัครสมาชิก</a>
+            <a href="pages/user-login.html" class="btn-nav" style="background: var(--primary-color); color: white; box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+</header>
+
+<section class="hero" id="hero-slider">
+    <div class="arrow arrow-left" onclick="prevSlide()">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+
+    <div class="hero-content animate-up" id="hero-text">
+        <h4 id="slide-subtitle">ระบบจองห้องสมุดออนไลน์</h4>
+        <h1 id="slide-title">จองห้องอ่านหนังสือได้ง่ายๆ</h1>
+        <div class="hero-buttons">
+            <button class="btn-explore" id="hero-book-btn">เข้าสู่ระบบเพื่อจอง</button>
+            <button class="btn-explore2" onclick="window.location.href='pages/queue.html'">ดูตารางการจอง</button>
+        </div>
+    </div>
+
+    <div class="arrow arrow-right" onclick="nextSlide()">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <div class="hiw-header">
+        <span>How it works</span>
+        <h2>ขั้นตอนการจองง่ายๆ ใน 3 สเต็ป</h2>
+    </div>
+
+    <div class="hiw-container">
+        <div class="hiw-card">
+            <div class="step-number">1</div>
+            <div class="hiw-icon">
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <h3>เข้าสู่ระบบ</h3>
+            <p>สมัครสมาชิกและเข้าสู่ระบบด้วยรหัสนักศึกษาของคุณ เพื่อยืนยันตัวตนก่อนเริ่มต้นการจอง</p>
+        </div>
+
+        <div class="hiw-card">
+            <div class="step-number">2</div>
+            <div class="hiw-icon">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <h3>เลือกห้องและเวลา</h3>
+            <p>ตรวจสอบตารางว่าง เลือกห้องอ่านหนังสือ และช่วงเวลาที่คุณต้องการใช้งานได้อย่างอิสระ</p>
+        </div>
+
+        <div class="hiw-card">
+            <div class="step-number">3</div>
+            <div class="hiw-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3>รอรับการอนุมัติ</h3>
+            <p>เมื่อเจ้าหน้าที่ยืนยันการจอง คุณสามารถตรวจสอบสถานะและเข้าใช้งานห้องได้ทันที</p>
+        </div>
+    </div>
+</section>
+
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // --- ระบบเล่นเสียงคลิก ---
+    const clickSound = document.getElementById('uiClickSound');
+    clickSound.volume = 0.3; 
+
+    function playClickEffect() {
+        clickSound.currentTime = 0; 
+        clickSound.play().catch(e => console.log("Audio play blocked by browser."));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const interactiveElements = document.querySelectorAll('button, a, .arrow');
+        interactiveElements.forEach(el => {
+            el.addEventListener('click', playClickEffect);
+        });
+    });
+
+    // ตรวจสอบและแสดงสถานะล็อกอิน
+    function updateAuthSection() {
+        const currentUser = localStorage.getItem('currentUser');
+        const navAuthSection = document.getElementById('nav-auth-section');
+        const heroBookBtn = document.getElementById('hero-book-btn');
         
-    </div>
-    <div class="top-bar-right">
-        📍 KMUTNB, Thailand | 📧 library@gmail.com | 📞 012-345-6789
-    </div>
-</div>
-
-<nav class="navbar">
-    <div class="logo">LibraryBooking</div>
-
-    <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="pages/about.html">About</a></li>
-        <li><a href="pages/faqs.html">Faqs</a></li>
-        <li><a href="pages/contact.html">Contact</a></li>
-        <li><a href="pages/admin.html">Admin</a></li>
-    </ul>
-
-    <div id="nav-auth-section">
-        <a href="pages/register.html" class="btn-nav btn-outline">สมัครสมาชิก</a>
-        <a href="pages/user-login.html" class="btn-nav">เข้าสู่ระบบ</a>
-    </div>
-</nav>
-
-    <header class="hero" id="hero-slider">
-        
-        <div class="arrow arrow-left" onclick="prevSlide()">
-            <i class="fa-solid fa-chevron-left"></i>
-        </div>
-
-        <div class="hero-content" id="hero-text">
-            <h4 id="slide-subtitle">Welcome to LibraryBooking</h4>
-            <h1 id="slide-title">You can booking now.</h1>
-            <button class="btn-explore" id="hero-book-btn">คลิกเพื่อจองห้อง</button>
-            <button class="btn-explore2" onclick="window.location.href='pages/queue.html'" >ดูตารางการจอง</button>
-            
-        </div>
-
-        <div class="arrow arrow-right" onclick="nextSlide()">
-            <i class="fa-solid fa-chevron-right"></i>
-        </div>
-    </header>
-
-    <script src="js/config.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // ตรวจสอบและแสดงสถานะล็อกอิน
-        function updateAuthSection() {
-            const currentUser = localStorage.getItem('currentUser');
-            const navAuthSection = document.getElementById('nav-auth-section');
-            const heroBookBtn = document.getElementById('hero-book-btn');
-            
-            if (currentUser) {
-                const user = JSON.parse(currentUser);
-                navAuthSection.innerHTML = `
-                    <span style="color: #4f46e5; font-weight: 600;">ยินดีต้อนรับ ${user.name}</span>
-                    <button class="btn-nav" style="background: #e74c3c; border: none; cursor: pointer;" onclick="logout()">ออกจากระบบ</button>
-                `;
-                heroBookBtn.textContent = 'คลิกเพื่อจองห้อง';
-                heroBookBtn.onclick = () => window.location.href = 'pages/booking.html';
-            } else {
-                heroBookBtn.textContent = 'เข้าสู่ระบบเพื่อจอง';
-                heroBookBtn.onclick = () => window.location.href = 'pages/user-login.html';
-            }
+        if (currentUser) {
+            const user = JSON.parse(currentUser);
+            navAuthSection.innerHTML = `
+                <span style="color: white; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.5);"><i class="fa-regular fa-circle-user"></i> ยินดีต้อนรับ, ${user.name}</span>
+                <button class="btn-nav btn-glass-danger" onclick="logout()">ออกจากระบบ</button>
+            `;
+            heroBookBtn.textContent = 'คลิกเพื่อจองห้อง';
+            heroBookBtn.onclick = () => window.location.href = 'pages/booking.html';
+        } else {
+            heroBookBtn.textContent = 'เข้าสู่ระบบเพื่อจอง';
+            heroBookBtn.onclick = () => window.location.href = 'pages/user-login.html';
         }
+    }
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
+    function logout() {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', updateAuthSection);
+
+    const slides = [
+        {
+            image: "assets/images/backimg1.jpg",
+            subtitle: "สะดวก รวดเร็ว ตลอด 24 ชั่วโมง",
+            title: "จองห้องอ่านหนังสือได้ง่ายๆ"
+        },
+        {
+            image: "assets/images/backimg4.jpg",
+            subtitle: "ประหยัดเวลา ไม่ต้องรอคิว",
+            title: "ใช้งานได้ทันทีในไม่กี่คลิก"
+        },
+        {
+            image: "assets/images/backimg3.jpg",
+            subtitle: "ครอบคลุมทุกความต้องการ",
+            title: "บริการทรัพยากรสารสนเทศต่างๆ"
         }
+    ];
 
-        // เรียก function เมื่อหน้า load
-        window.addEventListener('DOMContentLoaded', updateAuthSection);
+    let currentIndex = 0;
+    let autoSlideInterval; 
 
-        // 1. ข้อมูลรูปภาพและข้อความที่จะเปลี่ยน (Array of Objects)
-        const slides = [
-            {
-                image: "assets/images/backimg1.jpg",
-                subtitle: "",
-                title: "จองห้องอ่านหนังสือได้ง่ายๆ"
-            },
-            {
-                image: "assets/images/backimg4.jpg",
-                subtitle: "",
-                title: "ใช้งานได้ทันทีในไม่กี่คลิก"
-            },
-            {
-                image: "assets/images/backimg3.jpg",
-                subtitle: "",
-                title: "บริการทรัพยากรสารสนเทศประเภทต่างๆ"
-            }
-        ];
+    const heroSlider = document.getElementById('hero-slider');
+    const slideTitle = document.getElementById('slide-title');
+    const slideSubtitle = document.getElementById('slide-subtitle');
+    const heroText = document.getElementById('hero-text');
 
-        let currentIndex = 0; // ตัวแปรบอกตำแหน่งภาพปัจจุบัน (เริ่มที่ 0)
+    function initSlider() {
+        updateSlideContent();
+        startAutoSlide(); 
+    }
 
-        // ดึง Element จาก HTML มาเก็บไว้ในตัวแปร
-        const heroSlider = document.getElementById('hero-slider');
-        const slideTitle = document.getElementById('slide-title');
-        const slideSubtitle = document.getElementById('slide-subtitle');
-        const heroText = document.getElementById('hero-text');
+    function updateSlideContent() {
+        const currentSlide = slides[currentIndex];
+        heroSlider.style.backgroundImage = `url('${currentSlide.image}')`;
+        slideSubtitle.textContent = currentSlide.subtitle;
+        slideTitle.textContent = currentSlide.title;
+    }
 
-        // ฟังก์ชันเริ่มการทำงานครั้งแรก
-        function initSlider() {
+    function nextSlide() {
+        resetAutoSlide(); 
+        heroText.classList.add('fade-out');
+        setTimeout(() => {
+            currentIndex++;
+            if (currentIndex >= slides.length) { currentIndex = 0; }
             updateSlideContent();
-        }
+            heroText.classList.remove('fade-out');
+        }, 500); 
+    }
 
-        // ฟังก์ชันอัปเดตเนื้อหาบนหน้าจอ
-        function updateSlideContent() {
-            const currentSlide = slides[currentIndex];
-            
-            // เปลี่ยนรูปภาพพื้นหลัง
-            heroSlider.style.backgroundImage = `url('${currentSlide.image}')`;
-            
-            // เปลี่ยนข้อความ
-            slideSubtitle.textContent = currentSlide.subtitle;
-            slideTitle.textContent = currentSlide.title;
-        }
+    function prevSlide() {
+        resetAutoSlide();
+        heroText.classList.add('fade-out');
+        setTimeout(() => {
+            currentIndex--;
+            if (currentIndex < 0) { currentIndex = slides.length - 1; }
+            updateSlideContent();
+            heroText.classList.remove('fade-out');
+        }, 500);
+    }
 
-        // ฟังก์ชันกดปุ่มถัดไป
-        function nextSlide() {
-            // เพิ่ม Animation fade out
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(() => {
             heroText.classList.add('fade-out');
-
             setTimeout(() => {
                 currentIndex++;
-                // ถ้าเกินรูปสุดท้าย ให้กลับไปรูปแรก
-                if (currentIndex >= slides.length) {
-                    currentIndex = 0;
-                }
-                updateSlideContent();
-                // เอา Animation fade out ออก (เพื่อให้ข้อความแสดงขึ้นมา)
-                heroText.classList.remove('fade-out');
-            }, 300); // รอ 0.3 วินาทีให้ข้อความจางหายก่อนค่อยเปลี่ยน
-        }
-
-        // ฟังก์ชันกดปุ่มก่อนหน้า
-        function prevSlide() {
-            heroText.classList.add('fade-out');
-
-            setTimeout(() => {
-                currentIndex--;
-                // ถ้าต่ำกว่า 0 ให้ไปรูปสุดท้าย
-                if (currentIndex < 0) {
-                    currentIndex = slides.length - 1;
-                }
+                if (currentIndex >= slides.length) { currentIndex = 0; }
                 updateSlideContent();
                 heroText.classList.remove('fade-out');
-            }, 300);
-        }
+            }, 500);
+        }, 6000);
+    }
 
-        // เริ่มทำงานทันทีที่โหลดหน้าเว็บ
-        initSlider();
+    function resetAutoSlide() {
+        clearInterval(autoSlideInterval);
+        startAutoSlide();
+    }
 
-    </script>
+    initSlider();
+</script>
 
 <footer class="site-footer">
     <div class="footer-container">
-        <div class="footer-title">สำนักหอสมุดกลาง</div>
-        
+        <div class="footer-title">สำนักหอสมุดกลาง มจพ.</div>
         <div class="footer-info">
-            <p>
-                1518 ถนนประชาราษฎร์ 1 แขวงวงศ์สว่าง
-                เขตบางซื่อ กรุงเทพฯ 10800
-            </p>
-            
-            <p>Tel : 0-2555-2000 ต่อ 2147</p>
-            
-            <p>Email : <a href="mailto:info@lib.kmutnb.ac.th">info@lib.kmutnb.ac.th</a></p>
-            
-            <p>
-                <a href="https://www.facebook.com/Central.Library.Kmutnb" target="_blank">
-                    www.facebook.com/Central.Library.Kmutnb
+            <p>1518 ถนนประชาราษฎร์ 1 แขวงวงศ์สว่าง เขตบางซื่อ กรุงเทพฯ 10800</p>
+            <p><i class="fa-solid fa-phone"></i> Tel : 0-2555-2000 ต่อ 2147</p>
+            <p><i class="fa-solid fa-envelope"></i> Email : <a href="mailto:info@lib.kmutnb.ac.th">info@lib.kmutnb.ac.th</a></p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/Central.Library.Kmutnb" target="_blank" title="Facebook">
+                    <i class="fa-brands fa-facebook"></i>
                 </a>
-            </p>
+            </div>
         </div>
     </div>
 </footer>
