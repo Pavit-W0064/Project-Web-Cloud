@@ -21,6 +21,9 @@
     </div>
     <div class="main">
         <h2>List of Contact</h2>
+
+        <input type="text" id="searchContact" placeholder="Search username..." onkeyup="searchContact()">
+
         <table class = "admin-list" id="contactTable">
             <tr>
                 <th>No.</th>
@@ -31,20 +34,39 @@
                 <th>Detail</th>
                 <th>Approve</th>
                 <th>Reject</th>
-                <th>delete</th>
+                <th>Delete</th>
             </tr>
         </table>
     </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-box">
+            <h3>Booking Detail</h3>
+            <div id="detailContent"></div>
+            <div class="modal-buttons">
+                <button onclick="closeDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
 </div>
 <script src="../js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+let contactsData = [];
+
+/* =========================
+   LOAD CONTACTS
+========================= */
 function loadContacts() {
     fetch(window.apiUrl('/api/getBookings'))
         .then(res => res.json())
         .then(data => {
-
             if (!data.success) return;
 
+            contactsData = data.bookings;
             const table = document.getElementById('contactTable');
 
             table.innerHTML = `
@@ -62,7 +84,6 @@ function loadContacts() {
             `;
 
             data.bookings.forEach((item, index) => {
-
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
@@ -72,36 +93,18 @@ function loadContacts() {
                     <td>${item.subject}</td>
                     <td>${item.date}</td>
                     <td>
-                        <button class="detailBtn">👁</button>
+                        <button onclick="showDetail(${item.id})">👁️</button>
                     </td>
                     <td>
-                        <button class="approveBtn">✅</button>
+                        <button onclick="approveContact(${item.id})">✅</button>
                     </td>
-
                     <td>
-                        <button class="rejectBtn">❌</button>
+                        <button onclick="rejectContact(${item.id})">❌</button>
                     </td>
-
                     <td>
-                        <button class="deleteBtn">🗑️</button>
+                        <button onclick="deleteContact(${item.id})">🗑️</button>
                     </td>
                 `;
-
-                row.querySelector(".detailBtn").addEventListener("click", () => {
-                    alert("Message: " + item.message);
-                });
-
-                row.querySelector(".approveBtn").addEventListener("click",()=>{
-                approveContact(item.id);
-                });
-
-                row.querySelector(".rejectBtn").addEventListener("click",()=>{
-                rejectContact(item.id);
-                });    
-
-                row.querySelector(".deleteBtn").addEventListener("click", () => {
-                    deleteContact(item.id);
-                });
 
                 table.appendChild(row);
             });
@@ -109,95 +112,148 @@ function loadContacts() {
         });
 }
 
-function deleteContact(id) {
+/* =========================
+   SHOW DETAIL
+========================= */
+function showDetail(id) {
+    const contact = contactsData.find(c => c.id === id);
+    
+    if (!contact) {
+        Swal.fire('Error', 'ไม่พบข้อมูล', 'error');
+        return;
+    }
 
-    if (!confirm("ต้องการลบจริงไหม?")) return;
+    const detailContent = document.getElementById('detailContent');
+    detailContent.innerHTML = `
+        <p><b>Username:</b> ${contact.username}</p>
+        <p><b>Email:</b> ${contact.email}</p>
+        <p><b>Subject:</b> ${contact.subject}</p>
+        <p><b>Date:</b> ${contact.date}</p>
+        <p><b>Message:</b> ${contact.message}</p>
+    `;
 
-    fetch(window.apiUrl('/api/cancel-booking'), {
-        method: "POST",
+    document.getElementById('detailModal').style.display = 'flex';
+}
+
+function closeDetailModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+/* =========================
+   APPROVE CONTACT
+========================= */
+async function approveContact(id) {
+    const confirm = await Swal.fire({
+        title: 'Approve Booking?',
+        text: 'อนุมัติคำร้องนี้?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Approve',
+        confirmButtonColor: '#28a745'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch(window.apiUrl('/api/approveBooking'), {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        Swal.fire('Success!', 'อนุมัติสำเร็จ', 'success');
+        loadContacts();
+    } else {
+        Swal.fire('Error', data.message || 'อนุมัติไม่สำเร็จ', 'error');
+    }
+}
+
+/* =========================
+   REJECT CONTACT
+========================= */
+async function rejectContact(id) {
+    const confirm = await Swal.fire({
+        title: 'Reject Booking?',
+        text: 'ไม่อนุมัติคำร้องนี้?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        confirmButtonColor: '#ffc107'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch(window.apiUrl('/api/rejectBooking'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        Swal.fire('Success!', 'ปฏิเสธสำเร็จ', 'success');
+        loadContacts();
+    } else {
+        Swal.fire('Error', data.message || 'ปฏิเสธไม่สำเร็จ', 'error');
+    }
+}
+
+/* =========================
+   DELETE CONTACT
+========================= */
+async function deleteContact(id) {
+    const confirm = await Swal.fire({
+        title: 'Delete Contact?',
+        text: 'ต้องการลบจริงไหม?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        confirmButtonColor: '#d33'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch(window.apiUrl('/api/cancel-booking'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             bookingId: id,
-            student_id: "" // admin ลบได้เลย
+            student_id: ""
         })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert("ลบสำเร็จ");
-            loadContacts();
-        } else {
-            alert(data.message || "ลบไม่ได้");
-        }
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        Swal.fire('Deleted!', 'ลบสำเร็จ', 'success');
+        loadContacts();
+    } else {
+        Swal.fire('Error', data.message || 'ลบไม่ได้', 'error');
+    }
+}
+
+/* =========================
+   SEARCH CONTACT
+========================= */
+function searchContact() {
+    const input = document.getElementById('searchContact').value.toLowerCase();
+    const rows = document.querySelectorAll('#contactTable tr');
+
+    rows.forEach((row, index) => {
+        if (index === 0) return;
+        const username = row.children[1].textContent.toLowerCase();
+        row.style.display = username.includes(input) ? '' : 'none';
     });
 }
-
-// =========================
-// APPROVE
-// =========================
-function approveContact(id){
-
-if(!confirm("อนุมัติคำร้องนี้?")) return;
-
-fetch(window.apiUrl('/api/approveBooking'),{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({ id })
-})
-.then(res=>res.json())
-.then(data=>{
-
-if(data.success){
-
-alert("อนุมัติสำเร็จ");
-loadContacts();
-
-}else{
-
-alert("อนุมัติไม่สำเร็จ");
-
-}
-
-});
-
-}
-
-// =========================
-// REJECT
-// =========================
-function rejectContact(id){
-
-if(!confirm("ไม่อนุมัติคำร้องนี้?")) return;
-
-fetch(window.apiUrl('/api/rejectBooking'),{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({ id })
-})
-.then(res=>res.json())
-.then(data=>{
-
-if(data.success){
-
-alert("ปฏิเสธสำเร็จ");
-loadContacts();
-
-}else{
-
-alert("ปฏิเสธไม่สำเร็จ");
-
-}
-
-});
-
-}
-
 
 loadContacts();
 </script>
