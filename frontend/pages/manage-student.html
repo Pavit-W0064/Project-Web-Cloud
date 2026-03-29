@@ -9,16 +9,111 @@
 <style>
 
 .delete-btn{
-    background:#ff4d4f;
+    background:#d4a574;
     color:white;
     border:none;
-    padding:6px 12px;
+    padding:8px 16px;
     border-radius:6px;
     cursor:pointer;
+    font-weight:500;
+    transition: all 0.3s ease;
 }
 
 .delete-btn:hover{
-    background:#d9363e;
+    background:#c4935a;
+    transform: scale(1.05);
+}
+
+/* Delete Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.modal-content p {
+    margin: 0 0 30px 0;
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 10px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn-confirm {
+    background: #c53f3f;
+    color: white;
+    border: 2px solid #c53f3f;
+}
+
+.modal-btn-confirm:hover {
+    background: #a73232;
+    border-color: #a73232;
+    transform: scale(1.05);
+}
+
+.modal-btn-cancel {
+    background: white;
+    color: #333;
+    border: 2px solid #d9d9d9;
+}
+
+.modal-btn-cancel:hover {
+    border-color: #999;
+    background: #f5f5f5;
 }
 
 </style>
@@ -63,6 +158,18 @@
 </div>
 </div>
 
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>Delete Student/h3>
+        <p id="deleteMessage">ต้องการยืนยันการลบข้อมูล?</p>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-confirm" onclick="confirmDelete()">OK</button>
+            <button class="modal-btn modal-btn-cancel" onclick="cancelDelete()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <script src="../js/config.js"></script>
 
 <script>
@@ -104,7 +211,7 @@ async function loadStudents(){
                 <td>${user.username}</td>
                 <td>***</td>
                 <td>
-                    <button class="delete-btn" onclick="deleteStudent(${user.id})">
+                    <button class="delete-btn" onclick="showDeleteModal(${user.id})">
                         ลบ
                     </button>
                 </td>
@@ -125,12 +232,24 @@ async function loadStudents(){
 // ===============================
 // DELETE STUDENT
 // ===============================
-async function deleteStudent(id){
+let deleteUserId = null;
 
-    console.log("Delete ID:",id);
+function showDeleteModal(id) {
+    deleteUserId = id;
+    document.getElementById('deleteModal').classList.add('show');
+}
 
-    const confirmDelete = confirm("ต้องการลบข้อมูลนักศึกษาหรือไม่?");
-    if(!confirmDelete) return;
+function cancelDelete() {
+    deleteUserId = null;
+    document.getElementById('deleteModal').classList.remove('show');
+}
+
+async function confirmDelete(){
+
+    if(!deleteUserId) return;
+
+    const id = deleteUserId;
+    cancelDelete();
 
     try{
 
@@ -174,6 +293,13 @@ async function deleteStudent(id){
 // ===============================
 loadStudents();
 // ===============================
+
+// Close modal when clicking outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if(e.target === this) {
+        cancelDelete();
+    }
+});
 
 </script>
 
