@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ระบบจองห้องสมุด - เข้าสู่ระบบการจอง</title>
+    <link rel="stylesheet" href="../css/Project.css">
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดต่อเรา - LibraryBooking</title>
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดต่อเรา - LibraryBooking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Sarabun', sans-serif; }
+        body { background-color: #f4f4f4; color: #333; }
+
+        /* --- Top Bar & Navbar (ดึงมาจากโค้ดเดิมของคุณ) --- */
+        .top-bar { background-color: #4361ee; color: white; padding: 10px 5%; display: flex; justify-content: flex-end; align-items: center; font-size: 0.8rem; }
+        .navbar { background-color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .logo { display: flex; align-items: center; gap: 10px; color: #4361ee; font-size: 1.5rem; font-weight: 700; cursor: pointer; }
+        .logo i { font-size: 1.1em; }
+        .nav-links { list-style: none; display: flex; gap: 25px; }
+        .nav-links a { text-decoration: none; color: #555; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; transition: color 0.3s; }
+        .nav-links a:hover { color: #4361ee; }
+        .btn-nav { padding: 8px 20px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 0.85rem; }
+        .btn-login { background-color: #4361ee; color: white; }
+
+        /* --- Contact Section --- */
+        .contact-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ฝั่งซ้าย: ข้อมูลการติดต่อ */
+        .contact-info {
+            background-color: #4361ee;
+            color: white;
+            padding: 40px;
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .contact-info h2 { font-size: 1.8rem; margin-bottom: 10px; }
+        .contact-info p { font-weight: 300; margin-bottom: 30px; line-height: 1.6; }
+        
+        .info-item { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
+        .info-item i { font-size: 1.2rem; margin-top: 5px; }
+        .info-item div h4 { font-size: 1rem; margin-bottom: 5px; }
+        .info-item div p { font-size: 0.9rem; margin-bottom: 0; }
+
+        /* ฝั่งขวา: ฟอร์มแจ้งปัญหา */
+        .contact-form {
+            padding: 40px;
+            width: 60%;
+        }
+        .contact-form h2 { color: #4361ee; margin-bottom: 20px; font-size: 1.8rem; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; font-size: 0.9rem; }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus { outline: none; border-color: #4361ee; }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+        
+        .btn-submit {
+            background-color: #4361ee;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { background-color: #304ffe; transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div>📍 KMUTNB, Thailand | 📧 library@gmail.com | 📞 012-345-6789</div>
+    </div>
+
+    <nav class="navbar">
+    <div class="logo">LibraryBooking</div>
+
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="faqs.html">Faqs</a></li>
+        <li><a href="contact.html">Contact</a></li> 
+        <li><a href="admin.html">Admin</a></li>
+    </ul>
+
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="register.html" class="btn-nav" style="background: white; color: #4361ee; border: 1px solid #4361ee;">สมัครสมาชิก</a>
+            <a href="user-login.html" class="btn-nav btn-login">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>ติดต่อเรา</h2>
+            <p>พบปัญหาการใช้งานห้องอ่านหนังสือ อุปกรณ์ชำรุด หรือต้องการความช่วยเหลือ สามารถแจ้งให้เจ้าหน้าที่ทราบได้ที่นี่</p>
+            
+            <div class="info-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <div>
+                    <h4>ที่อยู่</h4>
+                    <p>สำนักหอสมุดกลาง<br>1518 ถ.ประชาราษฎร์ 1 เขตบางซื่อ<br>กรุงเทพฯ 10800</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fa-solid fa-phone"></i>
+                <div>
+                    <h4>โทรศัพท์</h4>
+                    <p>0-2555-2000 ต่อ 2147</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <h4>อีเมล</h4>
+                    <p>info@lib.kmutnb.ac.th</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            <h2>ส่งข้อความแจ้งปัญหา</h2>
+                <div class="form-group">
+                    <label for="name">ชื่อ - นามสกุล</label>
+                    <input type="text" id="name" class="form-control" placeholder="กรอกชื่อของคุณ" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">อีเมล</label>
+                    <input type="email" id="email" class="form-control" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="topic">หัวข้อที่ต้องการติดต่อ</label>
+                    <select id="topic" class="form-control" required>
+                        <option value="" disabled selected>เลือกหัวข้อปัญหา</option>
+                        <option value="equipment">อุปกรณ์ในห้องชำรุด (แอร์, ไฟ, ปลั๊ก)</option>
+                        <option value="system">ปัญหาการจองผ่านระบบ</option>
+                        <option value="noise">แจ้งปัญหาเสียงดังรบกวน</option>
+                        <option value="other">สอบถาม/ข้อเสนอแนะอื่นๆ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">รายละเอียด</label>
+                    <textarea id="message" class="form-control" placeholder="อธิบายรายละเอียดปัญหาที่คุณพบ..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">ส่งข้อความ</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
