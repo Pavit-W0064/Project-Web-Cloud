@@ -1,94 +1,299 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>Admin Dashboard</title>
-<link rel="stylesheet" href="../css/admin.css">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Admin - LibraryBooking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #304ffe;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        
+        body { 
+            background: url('../assets/images/backimg1.jpg') no-repeat center center/cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            z-index: -1;
+        }
+
+        /* --- Navbar (Glass) ด้านบน --- */
+        .admin-nav {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .admin-nav .logo { font-size: 1.5rem; font-weight: 700; color: white; letter-spacing: 1px; }
+        .admin-nav .logo span { color: var(--warning-color); font-size: 0.9rem; margin-left: 10px; padding: 3px 8px; background: rgba(245, 158, 11, 0.2); border-radius: 5px; }
+        .btn-logout { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: white; padding: 8px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; text-decoration: none; font-size: 0.9rem;}
+        .btn-logout:hover { background: var(--danger-color); box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+
+        /* --- Layout หลัก --- */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 65px);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 0;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+            animation: slideRight 0.5s ease-out forwards;
+        }
+
+        @keyframes slideRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+        .sidebar .logo { text-align: center; margin-bottom: 40px; font-size: 1.2rem; font-weight: 600; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .sidebar .logo img { width: 120px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px; }
+        .sidebar a { padding: 15px 30px; color: #cbd5e1; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 15px; transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .sidebar a:hover { background: rgba(255, 255, 255, 0.1); color: white; border-left-color: var(--primary-color); }
+        .sidebar a.active { background: linear-gradient(90deg, rgba(67, 97, 238, 0.2) 0%, transparent 100%); color: white; border-left-color: var(--primary-color); }
+        .sidebar a.logout { margin-top: auto; color: #fca5a5; }
+        .sidebar a.logout:hover { background: rgba(239, 68, 68, 0.2); color: white; border-left-color: var(--danger-color); }
+
+        /* --- Main Content --- */
+        .container { flex: 1; padding: 40px; overflow-y: auto; }
+
+        /* --- Glass Panel --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            animation: slideUpFade 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0; transform: translateY(40px);
+        }
+
+        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+        }
+        .panel-header h2 { font-weight: 600; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+
+        /* --- Toolbar (Search & Add) --- */
+        .toolbar {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px;
+        }
+
+        .search-box {
+            position: relative; flex: 1; max-width: 300px;
+        }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #cbd5e1; }
+        .search-box input {
+            width: 100%; padding: 10px 15px 10px 40px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.95rem;
+        }
+        .search-box input:focus { background: rgba(255, 255, 255, 0.2); border-color: var(--primary-color); }
+        .search-box input::placeholder { color: #cbd5e1; }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%);
+            color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+            font-weight: 500; display: flex; align-items: center; gap: 8px; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3); font-size: 0.95rem;
+        }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(67, 97, 238, 0.5); }
+
+        /* --- Data Table --- */
+        .table-responsive { overflow-x: auto; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .glass-table th, .glass-table td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-table th { font-weight: 500; color: #a5b4fc; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 0.5px; }
+        .glass-table tbody tr { transition: background 0.3s; }
+        .glass-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .admin-username { font-weight: 600; color: white; }
+        .admin-email { color: #cbd5e1; font-size: 0.9rem; }
+
+        /* --- Action Buttons --- */
+        .action-btns { display: flex; justify-content: center; gap: 10px; }
+        .btn-action { 
+            width: 35px; height: 35px; border-radius: 8px; border: none; cursor: pointer; 
+            display: flex; justify-content: center; align-items: center; transition: 0.3s; color: white; 
+        }
+        .btn-edit { background: rgba(245, 158, 11, 0.2); color: var(--warning-color); border: 1px solid rgba(245, 158, 11, 0.4); }
+        .btn-edit:hover { background: var(--warning-color); color: white; transform: translateY(-2px); }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .btn-delete:hover { background: var(--danger-color); color: white; transform: translateY(-2px); }
+
+        .fade-in-row { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+
+        /* --- Modals (Glassmorphism) --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 2000;
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal.show { display: flex; opacity: 1; }
+
+        .modal-box {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px; padding: 40px; width: 90%; max-width: 450px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal.show .modal-box { transform: scale(1); }
+
+        .modal-box h3 { margin-bottom: 25px; font-size: 1.5rem; color: white; text-align: center; font-weight: 600; }
+        
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; color: #cbd5e1; font-size: 0.95rem; }
+        .form-group input {
+            width: 100%; padding: 12px 15px; border-radius: 8px; font-size: 1rem; color: white;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); outline: none; transition: 0.3s;
+        }
+        .form-group input:focus { border-color: var(--primary-color); background: rgba(255, 255, 255, 0.1); }
+
+        .modal-buttons { display: flex; gap: 15px; margin-top: 30px; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem;}
+        .btn-cancel { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-cancel:hover { background: rgba(255, 255, 255, 0.2); }
+        .btn-confirm { background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%); color: white; }
+        .btn-confirm:hover { box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4); transform: translateY(-2px); }
+
+    </style>
+</head>
 <body>
 
+<audio id="uiClickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+<audio id="uiTypeSound" src="https://assets.mixkit.co/active_storage/sfx/2569/2569-preview.mp3" preload="auto"></audio>
+
+<nav class="admin-nav">
+    <div class="logo"><i class="fa-solid fa-shield-halved"></i> LibraryBooking <span>Admin Panel</span></div>
+
+</nav>
+
 <div class="layout">
-
-<!-- Sidebar -->
-<div class="sidebar">
-    <div class="logo"><img src ='../assets/images/KMUTNB_Logo.svg.png' alt="">ระบบหลังบ้าน</div>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="manage-student.html">Manage Students</a>
-    <a href="manage-admin.html">Manage Admin</a>
-    <a href="manage-contact.html">Manage Contact</a>
-    <a href="admin.html" class="logout">Logout</a>
-</div>
-
-<div class="main">
-    <h2>List of Administrators</h2>
-
-    <input type="text" id="searchAdmin" placeholder="Search username..." onkeyup="searchAdmin()">
-
-    <button class="btn-add" onclick="openAddModal()">➕ Add Admin</button>
-
-    <table class="admin-list" id="adminTable">
-        <tr>
-            <th>No.</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Password</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </table>
-</div>
-
-
-<!-- EDIT MODAL -->
-<div id="editModal" class="modal">
-    <div class="modal-box">
-
-        <h3>Edit Admin</h3>
-
-        <label>Username</label>
-        <input type="text" id="editUsername">
-
-        <label>Email</label>
-        <input type="text" id="editEmail">
-
-        <label>Password</label>
-        <input type="text" id="editPassword">
-
-        <div class="modal-buttons">
-            <button onclick="closeModal()">Cancel</button>
-            <button onclick="saveEdit()">Save</button>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../assets/images/KMUTNB_Logo.svg.png" alt="KMUTNB Logo">
+            ระบบหลังบ้าน
         </div>
+        
+        <a href="dashboard.html" class="click-effect"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="manage-student.html" class="click-effect"><i class="fa-solid fa-users"></i> Manage Students</a>
+        <a href="manage-admin.html" class="active click-effect"><i class="fa-solid fa-user-shield"></i> Manage Admin</a>
+        <a href="manage-Booking.html" class="click-effect"><i class="fa-regular fa-calendar-check"></i> Manage Booking</a>
+        <a href="admin_contact.html" class="click-effect"><i class="fa-regular fa-envelope-open"></i> Manage Contact</a>
+        
+        <a href="admin.html" class="logout click-effect"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
 
+    <div class="container">
+        <div class="glass-panel">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-user-tie"></i> รายชื่อผู้ดูแลระบบ (Administrators)</h2>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchAdmin" class="type-effect" placeholder="ค้นหา Username..." onkeyup="searchAdmin()">
+                </div>
+                <button class="btn-add click-effect" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> เพิ่มแอดมินใหม่</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="glass-table" id="adminTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <tr><td colspan="5" style="padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-
-<!-- ADD MODAL -->
 <div id="addModal" class="modal">
     <div class="modal-box">
-
-        <h3>Add Admin</h3>
-
-        <label>Username</label>
-        <input type="text" id="addUsername">
-
-        <label>Email</label>
-        <input type="text" id="addEmail">
-
-        <label>Password</label>
-        <input type="text" id="addPassword">
-
-        <div class="modal-buttons">
-            <button onclick="closeAddModal()">Cancel</button>
-            <button onclick="saveAddAdmin()">Add</button>
+        <h3><i class="fa-solid fa-user-plus"></i> เพิ่มผู้ดูแลระบบ</h3>
+        
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="addUsername" class="type-effect" placeholder="ตั้งชื่อผู้ใช้งาน">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="addEmail" class="type-effect" placeholder="อีเมลติดต่อ">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="addPassword" class="type-effect" placeholder="ตั้งรหัสผ่าน">
         </div>
 
+        <div class="modal-buttons">
+            <button class="btn-modal btn-cancel click-effect" onclick="closeAddModal()">ยกเลิก</button>
+            <button class="btn-modal btn-confirm click-effect" onclick="saveAddAdmin()">บันทึกข้อมูล</button>
+        </div>
     </div>
 </div>
 
+<div id="editModal" class="modal">
+    <div class="modal-box">
+        <h3><i class="fa-solid fa-pen-to-square"></i> แก้ไขข้อมูลแอดมิน</h3>
+        
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="editUsername" class="type-effect">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="editEmail" class="type-effect">
+        </div>
+        <div class="form-group">
+            <label>Password <span style="font-size: 0.8rem; color:#94a3b8;">(เว้นว่างไว้หากไม่ต้องการเปลี่ยน)</span></label>
+            <input type="password" id="editPassword" class="type-effect" placeholder="รหัสผ่านใหม่">
+        </div>
 
-
+        <div class="modal-buttons">
+            <button class="btn-modal btn-cancel click-effect" onclick="closeEditModal()">ยกเลิก</button>
+            <button class="btn-modal btn-confirm click-effect" onclick="saveEdit()">บันทึกการแก้ไข</button>
+        </div>
+    </div>
 </div>
 
 
@@ -96,276 +301,232 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // --- 1. ระบบเสียงคลิก และ พิมพ์ ---
+    const clickSound = document.getElementById('uiClickSound');
+    const typeSound = document.getElementById('uiTypeSound');
+    clickSound.volume = 0.3; typeSound.volume = 0.05;
 
-let currentEditId = null;
-let adminsData = [];
+    function playClickEffect() {
+        clickSound.currentTime = 0; clickSound.play().catch(e => console.log("Audio play blocked"));
+    }
+    function playTypeEffect() {
+        typeSound.currentTime = 0; typeSound.play().catch(e => console.log("Audio play blocked"));
+    }
 
+    let currentEditId = null;
+    let adminsData = [];
 
-/* =========================
-   LOAD ADMINS
-========================= */
+    // --- 2. ฟังก์ชันโหลดแอดมิน ---
+    async function loadAdmins() {
+        const tbody = document.getElementById("adminTableBody");
+        try {
+            let apiEndpoint = 'http://localhost:3000/api/getAdmins';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/getAdmins');
 
-async function loadAdmins(){
+            const res = await fetch(apiEndpoint);
+            const data = await res.json();
 
-    const res = await fetch(window.apiUrl('/api/getAdmins'));
-    const data = await res.json();
+            tbody.innerHTML = ""; // ล้างข้อมูล
 
-    if(!data.success) return;
+            if(!data.success || data.admins.length === 0){
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; color: #94a3b8;">ไม่มีข้อมูลผู้ดูแลระบบ</td></tr>`;
+                return;
+            }
 
-    adminsData = data.admins;
+            adminsData = data.admins;
 
-    const table = document.getElementById("adminTable");
+            adminsData.forEach((admin, index) => {
+                const tr = document.createElement("tr");
+                tr.className = 'fade-in-row admin-row';
+                tr.style.animationDelay = `${index * 0.1}s`;
 
-    table.innerHTML = `
-    <tr>
-        <th>No.</th>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Password</th>
-        <th>Edit</th>
-        <th>Delete</th>
-    </tr>
-    `;
+                tr.innerHTML = `
+                    <td>${index+1}</td>
+                    <td class="admin-username">${admin.username}</td>
+                    <td class="admin-email">${admin.email}</td>
+                    <td style="color: #94a3b8; letter-spacing: 2px;">********</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-action btn-edit click-effect" onclick="openEditModal(${admin.id})" title="แก้ไข"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-action btn-delete click-effect" onclick="deleteAdmin(${admin.id}, '${admin.username}')" title="ลบ"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
 
-    data.admins.forEach((admin,index)=>{
+            // ผูกเสียงให้ปุ่มที่เพิ่งสร้าง
+            document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
 
-        table.innerHTML += `
-        <tr>
-            <td>${index+1}</td>
-            <td>${admin.username}</td>
-            <td>${admin.email}</td>
-            <td>${admin.password}</td>
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; color: #ef4444;">ไม่สามารถโหลดข้อมูลได้ โปรดตรวจสอบเซิร์ฟเวอร์</td></tr>`;
+        }
+    }
 
-            <td>
-                <button onclick="editAdmin(${admin.id})">✏️</button>
-            </td>
+    // --- 3. ฟังก์ชันค้นหา ---
+    function searchAdmin() {
+        const input = document.getElementById("searchAdmin").value.toLowerCase();
+        const rows = document.querySelectorAll(".admin-row");
 
-            <td>
-                <button onclick="deleteAdmin(${admin.id})">🗑️</button>
-            </td>
-        </tr>
-        `;
+        rows.forEach(row => {
+            const username = row.querySelector('.admin-username').textContent.toLowerCase();
+            row.style.display = username.includes(input) ? "" : "none";
+        });
+    }
 
-    });
+    // --- 4. ฟังก์ชันเพิ่มแอดมิน (Add) ---
+    function openAddModal() {
+        document.getElementById("addUsername").value = "";
+        document.getElementById("addEmail").value = "";
+        document.getElementById("addPassword").value = "";
+        const modal = document.getElementById("addModal");
+        modal.classList.add('show');
+    }
 
-}
+    function closeAddModal() {
+        document.getElementById("addModal").classList.remove('show');
+    }
 
+    async function saveAddAdmin() {
+        const username = document.getElementById("addUsername").value.trim();
+        const email = document.getElementById("addEmail").value.trim();
+        const password = document.getElementById("addPassword").value.trim();
 
+        if(!username || !email || !password){
+            Swal.fire({ icon:'warning', title:'กรุณากรอกข้อมูลให้ครบถ้วน', confirmButtonColor: '#f59e0b' });
+            return;
+        }
 
-/* =========================
-   DELETE ADMIN
-========================= */
+        try {
+            let apiEndpoint = 'http://localhost:3000/api/addAdmin';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/addAdmin');
 
-async function deleteAdmin(id){
+            const res = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
 
-    const confirm = await Swal.fire({
-        title:'Delete Admin?',
-        text:'ต้องการลบ Admin นี้หรือไม่',
-        icon:'warning',
-        showCancelButton:true,
-        confirmButtonText:'Delete',
-        confirmButtonColor:'#d33'
-    });
+            const data = await res.json();
 
-    if(!confirm.isConfirmed) return;
+            if(data.success){
+                Swal.fire({ icon:'success', title:'เพิ่ม Admin สำเร็จ', confirmButtonColor: '#4361ee' });
+                closeAddModal();
+                loadAdmins();
+            } else {
+                Swal.fire({ icon:'error', title:'เพิ่มไม่สำเร็จ', text: data.message, confirmButtonColor: '#ef4444' });
+            }
+        } catch(err) {
+            Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+        }
+    }
 
-    const res = await fetch(window.apiUrl('/api/deleteAdmin/'+id),{
-        method:'DELETE'
-    });
+    // --- 5. ฟังก์ชันแก้ไขแอดมิน (Edit) ---
+    function openEditModal(id) {
+        const admin = adminsData.find(a => a.id === id);
+        if(!admin) return;
 
-    const data = await res.json();
+        currentEditId = admin.id;
+        document.getElementById("editUsername").value = admin.username;
+        document.getElementById("editEmail").value = admin.email;
+        document.getElementById("editPassword").value = ""; // ไม่โชว์รหัสเดิม เผื่ออยากแก้ค่อยพิมพ์ใหม่
 
-    if(data.success){
+        document.getElementById("editModal").classList.add('show');
+    }
 
-        Swal.fire('Deleted!','ลบสำเร็จ','success');
+    function closeEditModal() {
+        document.getElementById("editModal").classList.remove('show');
+        currentEditId = null;
+    }
+
+    async function saveEdit() {
+        const username = document.getElementById("editUsername").value.trim();
+        const email = document.getElementById("editEmail").value.trim();
+        const password = document.getElementById("editPassword").value.trim();
+
+        if(!username || !email){
+            Swal.fire({ icon:'warning', title:'ชื่อผู้ใช้และอีเมลห้ามว่าง', confirmButtonColor: '#f59e0b' });
+            return;
+        }
+
+        try {
+            let apiEndpoint = `http://localhost:3000/api/updateAdmin/${currentEditId}`;
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl(`/api/updateAdmin/${currentEditId}`);
+
+            const res = await fetch(apiEndpoint, {
+                method: 'PUT',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify({ username, email, password }) // ถ้า password ว่าง Backend ต้องจัดการให้ไม่แก้รหัส
+            });
+
+            const data = await res.json();
+
+            if(data.success){
+                Swal.fire({ icon:'success', title:'บันทึกการแก้ไขสำเร็จ', confirmButtonColor: '#4361ee' });
+                closeEditModal();
+                loadAdmins();
+            } else {
+                Swal.fire({ icon:'error', title:'แก้ไขไม่สำเร็จ', text: data.message, confirmButtonColor: '#ef4444' });
+            }
+        } catch(err) {
+            Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+        }
+    }
+
+    // --- 6. ฟังก์ชันลบแอดมิน (Delete) ---
+    function deleteAdmin(id, username) {
+        Swal.fire({
+            title: 'ยืนยันการลบ?',
+            text: `ต้องการลบแอดมิน "${username}" ออกจากระบบใช่หรือไม่?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ลบเลย!',
+            cancelButtonText: 'ยกเลิก'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    let apiEndpoint = `http://localhost:3000/api/deleteAdmin/${id}`;
+                    if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl(`/api/deleteAdmin/${id}`);
+
+                    const res = await fetch(apiEndpoint, { method: 'DELETE' });
+                    const data = await res.json();
+
+                    if(data.success){
+                        Swal.fire('ลบสำเร็จ!', `ลบ ${username} เรียบร้อยแล้ว`, 'success');
+                        loadAdmins();
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                } catch(err) {
+                    Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+                }
+            }
+        });
+    }
+
+    // --- Setup เมื่อโหลดหน้าเว็บ ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // ผูกเสียง Sidebar
+        document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+        // ผูกเสียงพิมพ์
+        document.querySelectorAll('.type-effect').forEach(el => {
+            el.addEventListener('keydown', (e) => {
+                if(e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt') playTypeEffect();
+            });
+        });
+
+        // ปิด Modal เมื่อคลิกพื้นที่ว่าง
+        window.onclick = function(event) {
+            const addModal = document.getElementById('addModal');
+            const editModal = document.getElementById('editModal');
+            if (event.target == addModal) closeAddModal();
+            if (event.target == editModal) closeEditModal();
+        }
 
         loadAdmins();
-    }
-
-}
-
-
-
-/* =========================
-   ADD ADMIN
-========================= */
-
-function openAddModal(){
-
-    document.getElementById("addModal").style.display="flex";
-
-    document.getElementById("addUsername").value="";
-    document.getElementById("addEmail").value="";
-    document.getElementById("addPassword").value="";
-
-}
-
-function closeAddModal(){
-
-    document.getElementById("addModal").style.display="none";
-
-}
-
-async function saveAddAdmin(){
-
-    const username=document.getElementById("addUsername").value.trim();
-    const email=document.getElementById("addEmail").value.trim();
-    const password=document.getElementById("addPassword").value.trim();
-
-    if(!username || !email || !password){
-
-        Swal.fire({
-            icon:'warning',
-            title:'กรอกข้อมูลให้ครบ'
-        });
-
-        return;
-    }
-
-    const res = await fetch(window.apiUrl('/api/addAdmin'),{
-
-        method:'POST',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify({
-            username,
-            email,
-            password
-        })
-
     });
-
-    const data = await res.json();
-
-    if(data.success){
-
-        Swal.fire({
-            icon:'success',
-            title:'เพิ่ม Admin สำเร็จ'
-        });
-
-        closeAddModal();
-        loadAdmins();
-
-    }else{
-
-        Swal.fire({
-            icon:'error',
-            title:'เพิ่มไม่สำเร็จ',
-            text:data.message
-        });
-
-    }
-
-}
-
-
-
-/* =========================
-   EDIT ADMIN
-========================= */
-
-function editAdmin(id){
-
-    const admin = adminsData.find(a => a.id === id);
-
-    if(!admin){
-        alert("ไม่พบข้อมูล");
-        return;
-    }
-
-    currentEditId = admin.id;
-
-    document.getElementById("editUsername").value = admin.username;
-    document.getElementById("editEmail").value = admin.email;
-    document.getElementById("editPassword").value = admin.password;
-
-    document.getElementById("editModal").style.display="flex";
-
-}
-
-function closeModal(){
-
-    document.getElementById("editModal").style.display="none";
-
-}
-
-
-
-async function saveEdit(){
-
-    const username=document.getElementById("editUsername").value;
-    const email=document.getElementById("editEmail").value;
-    const password=document.getElementById("editPassword").value;
-
-    const res = await fetch(window.apiUrl('/api/updateAdmin/'+currentEditId),{
-
-        method:'PUT',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify({
-            username,
-            email,
-            password
-        })
-
-    });
-
-    const data = await res.json();
-
-    if(data.success){
-
-        Swal.fire({
-            icon:'success',
-            title:'แก้ไขสำเร็จ'
-        });
-
-        closeModal();
-        loadAdmins();
-
-    }else{
-
-        Swal.fire({
-            icon:'error',
-            title:'แก้ไขไม่สำเร็จ'
-        });
-
-    }
-
-}
-
-
-
-/* =========================
-   SEARCH ADMIN
-========================= */
-
-function searchAdmin(){
-
-    const input = document.getElementById("searchAdmin").value.toLowerCase();
-
-    const rows = document.querySelectorAll("#adminTable tr");
-
-    rows.forEach((row,index)=>{
-
-        if(index===0) return;
-
-        const username = row.children[1].textContent.toLowerCase();
-
-        row.style.display = username.includes(input) ? "" : "none";
-
-    });
-
-}
-
-
-loadAdmins();
 
 </script>
 

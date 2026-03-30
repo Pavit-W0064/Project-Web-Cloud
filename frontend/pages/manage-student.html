@@ -1,305 +1,337 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>Manage Students</title>
-<link rel="stylesheet" href="../css/admin.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Students - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #304ffe;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
 
-<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        
+        body { 
+            /* ใช้ภาพพื้นหลังเดียวกับ Dashboard เพื่อคงคอนเซปต์ Glassmorphism */
+            background: url('../assets/images/backimg1.jpg') no-repeat center center/cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
 
-.delete-btn{
-    background:#d4a574;
-    color:white;
-    border:none;
-    padding:8px 16px;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:500;
-    transition: all 0.3s ease;
-}
+        /* Overlay สีเข้มทับภาพพื้นหลัง */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            z-index: -1;
+        }
 
-.delete-btn:hover{
-    background:#c4935a;
-    transform: scale(1.05);
-}
+        /* --- Navbar (Glass) ด้านบน --- */
+        .admin-nav {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .admin-nav .logo { font-size: 1.5rem; font-weight: 700; color: white; letter-spacing: 1px; }
+        .admin-nav .logo span { color: var(--warning-color); font-size: 0.9rem; margin-left: 10px; padding: 3px 8px; background: rgba(245, 158, 11, 0.2); border-radius: 5px; }
+        .btn-logout { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: white; padding: 8px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; text-decoration: none; font-size: 0.9rem;}
+        .btn-logout:hover { background: var(--danger-color); box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
 
-/* Delete Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
+        /* --- Layout หลัก --- */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 65px); /* หักความสูง Navbar บนออก */
+            position: relative;
+            z-index: 10;
+        }
 
-.modal.show {
-    display: flex;
-}
+        /* --- Sidebar (Glassmorphism) --- */
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 0;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+            animation: slideRight 0.5s ease-out forwards;
+        }
 
-.modal-content {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
-    min-width: 400px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    animation: modalSlideIn 0.3s ease-out;
-}
+        @keyframes slideRight {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
 
-@keyframes modalSlideIn {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
+        .sidebar .logo {
+            text-align: center; margin-bottom: 40px;
+            font-size: 1.2rem; font-weight: 600; color: white;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
 
-.modal-content h3 {
-    margin: 0 0 15px 0;
-    font-size: 18px;
-    color: #333;
-    font-weight: 600;
-}
+        .sidebar .logo img {
+            width: 120px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px; border-radius: 10px;
+        }
 
-.modal-content p {
-    margin: 0 0 30px 0;
-    font-size: 16px;
-    color: #666;
-    line-height: 1.5;
-}
+        .sidebar a {
+            padding: 15px 30px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex; align-items: center; gap: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
 
-.modal-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-}
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: var(--primary-color);
+        }
 
-.modal-btn {
-    padding: 10px 30px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+        .sidebar a.active {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.2) 0%, transparent 100%);
+            color: white;
+            border-left-color: var(--primary-color);
+        }
 
-.modal-btn-confirm {
-    background: #c53f3f;
-    color: white;
-    border: 2px solid #c53f3f;
-}
+        .sidebar a.logout { margin-top: auto; color: #fca5a5; }
+        .sidebar a.logout:hover { background: rgba(239, 68, 68, 0.2); color: white; border-left-color: var(--danger-color); }
 
-.modal-btn-confirm:hover {
-    background: #a73232;
-    border-color: #a73232;
-    transform: scale(1.05);
-}
+        /* --- Main Content (Container) --- */
+        .container {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
 
-.modal-btn-cancel {
-    background: white;
-    color: #333;
-    border: 2px solid #d9d9d9;
-}
+        /* --- Glass Panel สำหรับตาราง --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            
+            /* Animation เปิดตัว */
+            animation: slideUpFade 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0; transform: translateY(40px);
+        }
 
-.modal-btn-cancel:hover {
-    border-color: #999;
-    background: #f5f5f5;
-}
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-</style>
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+        }
+        .panel-header h2 { font-weight: 600; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
 
+        /* --- Data Table --- */
+        .table-responsive { overflow-x: auto; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .glass-table th, .glass-table td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-table th { font-weight: 500; color: #a5b4fc; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 0.5px; }
+        .glass-table tbody tr { transition: background 0.3s; }
+        .glass-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .student-id { font-weight: 600; color: #93c5fd; }
+        .password-mask { letter-spacing: 3px; color: #94a3b8; }
+
+        /* --- ปุ่มลบ --- */
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+
+        .btn-delete:hover {
+            background: var(--danger-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Animation โหลดแถวตาราง */
+        .fade-in-row { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+    </style>
 </head>
-
 <body>
 
+<audio id="uiClickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+<nav class="admin-nav">
+    <div class="logo"><i class="fa-solid fa-shield-halved"></i> LibraryBooking <span>Admin Panel</span></div>
+</nav>
+
 <div class="layout">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../assets/images/KMUTNB_Logo.svg.png" alt="KMUTNB Logo">
+            ระบบหลังบ้าน
+        </div>
+        
+        <a href="dashboard.html" class="click-effect"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="manage-student.html" class="active click-effect"><i class="fa-solid fa-users"></i> Manage Students</a>
+        <a href="manage-admin.html" class="click-effect"><i class="fa-solid fa-user-shield"></i> Manage Admin</a>
+        <a href="manage-Booking.html" class="click-effect"><i class="fa-regular fa-calendar-check"></i> Manage Booking</a>
+        <a href="admin_contact.html" class="click-effect"><i class="fa-regular fa-envelope-open"></i> Manage Contact</a>
+        
+        <a href="admin.html" class="logout click-effect"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <div class="logo"><img src ='../assets/images/KMUTNB_Logo.svg.png' alt="">ระบบหลังบ้าน</div>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="manage-student.html">Manage Students</a>
-    <a href="manage-admin.html">Manage Admin</a>
-    <a href="manage-contact.html">Manage Contact</a>
-    <a href="admin.html" class="logout">Logout</a>
-</div>
+    <div class="container">
+        <div class="glass-panel">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-user-graduate"></i> รายชื่อนักศึกษาที่ลงทะเบียน</h2>
+            </div>
 
-<!-- Main -->
-<div class="main">
-
-<h2>รายชื่อนักศึกษาที่ลงทะเบียน</h2>
-
-<table class="admin-list">
-
-<thead>
-<tr>
-<th>No.</th>
-<th>Student id</th>
-<th>Username</th>
-<th>Password</th>
-<th>Delete</th>
-</tr>
-</thead>
-
-<tbody id="studentTableBody"></tbody>
-
-</table>
-
-</div>
-</div>
-
-<!-- Delete Modal -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <h3>Delete Student/h3>
-        <p id="deleteMessage">ต้องการยืนยันการลบข้อมูล?</p>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-confirm" onclick="confirmDelete()">OK</button>
-            <button class="modal-btn modal-btn-cancel" onclick="cancelDelete()">Cancel</button>
+            <div class="table-responsive">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Student ID</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr><td colspan="5" style="padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="../js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // --- 1. ระบบเสียงคลิก ---
+    const clickSound = document.getElementById('uiClickSound');
+    clickSound.volume = 0.3;
 
-// ===============================
-// LOAD STUDENTS
-// ===============================
-async function loadStudents(){
+    function playClickEffect() {
+        clickSound.currentTime = 0; 
+        clickSound.play().catch(e => console.log("Audio play blocked"));
+    }
 
-    try{
-
-        const res = await fetch(window.apiUrl('/api/getUsers'));
-        const data = await res.json();
-
-        console.log("Students:", data);
-
+    // ฟังก์ชันโหลดข้อมูลนักศึกษา
+    async function loadStudents() {
         const tbody = document.getElementById("studentTableBody");
-        tbody.innerHTML = "";
+        
+        try {
+            // ดึงข้อมูล (รองรับการใช้ window.apiUrl)
+            let apiEndpoint = 'http://localhost:3000/api/getUsers';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/getUsers');
 
-        if(!data.success || data.users.length === 0){
+            const res = await fetch(apiEndpoint);
+            const data = await res.json();
 
-            tbody.innerHTML = `
-            <tr>
-                <td colspan="5">ยังไม่มีนักศึกษาลงทะเบียน</td>
-            </tr>
-            `;
-            return;
+            tbody.innerHTML = ""; // ล้างข้อมูลเก่า
+
+            if (!data.success || data.users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; color: #94a3b8;">ยังไม่มีนักศึกษาลงทะเบียนในระบบ</td></tr>`;
+                return;
+            }
+
+            data.users.forEach((user, index) => {
+                const tr = document.createElement("tr");
+                tr.className = 'fade-in-row';
+                tr.style.animationDelay = `${index * 0.1}s`;
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="student-id">${user.student_id}</td>
+                    <td>${user.username}</td>
+                    <td class="password-mask">********</td>
+                    <td>
+                        <button class="btn-delete click-effect" onclick="confirmDelete(${user.id}, '${user.student_id}')">
+                            <i class="fa-solid fa-trash-can"></i> ลบ
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // ผูกเสียงเข้ากับปุ่มที่เพิ่งสร้างขึ้นใหม่
+            document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+
+        } catch (err) {
+            console.error("โหลดข้อมูลล้มเหลว:", err);
+            tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; color: #ef4444;">เกิดข้อผิดพลาดในการดึงข้อมูลจากเซิร์ฟเวอร์</td></tr>`;
         }
+    }
 
-        data.users.forEach((user,index)=>{
+    // ฟังก์ชันลบนักศึกษา (เปลี่ยนมาใช้ SweetAlert2 ให้เข้าธีม)
+    function confirmDelete(id, studentId) {
+        Swal.fire({
+            title: 'ยืนยันการลบข้อมูล?',
+            text: `คุณต้องการลบข้อมูลของนักศึกษารหัส ${studentId} ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ลบเลย!',
+            cancelButtonText: 'ยกเลิก'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    let apiEndpoint = `http://localhost:3000/api/deleteUser/${id}`;
+                    if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl(`/api/deleteUser/${id}`);
 
-            const tr = document.createElement("tr");
+                    const res = await fetch(apiEndpoint, { method: 'DELETE' });
+                    const data = await res.json();
 
-            tr.innerHTML = `
-                <td>${index+1}</td>
-                <td style="font-weight:bold;color:#2f54eb;">
-                    ${user.student_id}
-                </td>
-                <td>${user.username}</td>
-                <td>***</td>
-                <td>
-                    <button class="delete-btn" onclick="showDeleteModal(${user.id})">
-                        ลบ
-                    </button>
-                </td>
-            `;
-
-            tbody.appendChild(tr);
-
+                    if (data.success) {
+                        Swal.fire('ลบสำเร็จ!', `ข้อมูลนักศึกษารหัส ${studentId} ถูกลบแล้ว`, 'success');
+                        loadStudents(); // รีโหลดตารางใหม่
+                    } else {
+                        Swal.fire('ผิดพลาด', 'ไม่สามารถลบข้อมูลได้: ' + (data.message || 'Unknown Error'), 'error');
+                    }
+                } catch (err) {
+                    console.error("Delete Error:", err);
+                    Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+                }
+            }
         });
-
-    }
-    catch(err){
-        console.error("โหลดข้อมูลล้มเหลว:",err);
     }
 
-}
-
-
-// ===============================
-// DELETE STUDENT
-// ===============================
-let deleteUserId = null;
-
-function showDeleteModal(id) {
-    deleteUserId = id;
-    document.getElementById('deleteModal').classList.add('show');
-}
-
-function cancelDelete() {
-    deleteUserId = null;
-    document.getElementById('deleteModal').classList.remove('show');
-}
-
-async function confirmDelete(){
-
-    if(!deleteUserId) return;
-
-    const id = deleteUserId;
-    cancelDelete();
-
-    try{
-
-        const res = await fetch(
-            window.apiUrl('/api/deleteUser/' + id),
-            { method:'DELETE' }
-        );
-
-        if(!res.ok){
-            alert("Server Error");
-            return;
-        }
-
-        const data = await res.json();
-
-        console.log("Delete result:",data);
-
-        if(data.success){
-
-            alert("ลบสำเร็จ");
-
-            loadStudents();
-
-        }else{
-
-            alert("ลบไม่สำเร็จ");
-
-        }
-
-    }
-    catch(err){
-
-        console.error("Delete Error:",err);
-        alert("เกิดข้อผิดพลาด");
-
-    }
-
-}
-
-
-// ===============================
-loadStudents();
-// ===============================
-
-// Close modal when clicking outside
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if(e.target === this) {
-        cancelDelete();
-    }
-});
+    // เมื่อโหลดหน้าเว็บเสร็จ
+    document.addEventListener('DOMContentLoaded', () => {
+        // ผูกเสียงเมนู Sidebar
+        document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+        
+        // โหลดรายชื่อนักศึกษา
+        loadStudents();
+    });
 
 </script>
 

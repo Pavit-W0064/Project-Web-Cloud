@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Booking - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #304ffe;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        
+        body { 
+            background: url('../assets/images/backimg1.jpg') no-repeat center center/cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            z-index: -1;
+        }
+
+        /* --- Navbar (Glass) --- */
+        .admin-nav {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .admin-nav .logo { font-size: 1.5rem; font-weight: 700; color: white; letter-spacing: 1px; }
+        .admin-nav .logo span { color: var(--warning-color); font-size: 0.9rem; margin-left: 10px; padding: 3px 8px; background: rgba(245, 158, 11, 0.2); border-radius: 5px; }
+        .btn-logout { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: white; padding: 8px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; text-decoration: none; font-size: 0.9rem;}
+        .btn-logout:hover { background: var(--danger-color); box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+
+        /* --- Layout หลัก --- */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 65px);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; padding: 30px 0;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+            animation: slideRight 0.5s ease-out forwards;
+        }
+        @keyframes slideRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+        .sidebar .logo { text-align: center; margin-bottom: 40px; font-size: 1.2rem; font-weight: 600; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .sidebar .logo img { width: 120px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px; }
+        .sidebar a { padding: 15px 30px; color: #cbd5e1; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 15px; transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .sidebar a:hover { background: rgba(255, 255, 255, 0.1); color: white; border-left-color: var(--primary-color); }
+        .sidebar a.active { background: linear-gradient(90deg, rgba(67, 97, 238, 0.2) 0%, transparent 100%); color: white; border-left-color: var(--primary-color); }
+        .sidebar a.logout { margin-top: auto; color: #fca5a5; }
+        .sidebar a.logout:hover { background: rgba(239, 68, 68, 0.2); color: white; border-left-color: var(--danger-color); }
+
+        /* --- Main Content --- */
+        .container { flex: 1; padding: 40px; overflow-y: auto; }
+
+        /* --- Glass Panel --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 20px; padding: 30px;
+            animation: slideUpFade 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0; transform: translateY(40px);
+        }
+        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+        }
+        .panel-header h2 { font-weight: 600; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+
+        /* --- Toolbar (Search) --- */
+        .toolbar { margin-bottom: 20px; }
+        .search-box { position: relative; max-width: 300px; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #cbd5e1; }
+        .search-box input {
+            width: 100%; padding: 10px 15px 10px 40px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.95rem;
+        }
+        .search-box input:focus { background: rgba(255, 255, 255, 0.2); border-color: var(--primary-color); }
+        .search-box input::placeholder { color: #cbd5e1; }
+
+        /* --- Data Table --- */
+        .table-responsive { overflow-x: auto; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        .glass-table th, .glass-table td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-table th { font-weight: 500; color: #a5b4fc; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+        .glass-table tbody tr { transition: background 0.3s; }
+        .glass-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .booking-subject { font-weight: 600; color: #93c5fd; }
+        
+        /* Status Badges */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-approved { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        /* Action Buttons */
+        .action-btns { display: flex; justify-content: center; gap: 8px; }
+        .btn-action { 
+            width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; 
+            display: flex; justify-content: center; align-items: center; transition: 0.3s; color: white; 
+        }
+        .btn-view { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .btn-view:hover { background: #38bdf8; color: white; transform: translateY(-2px); }
+        .btn-approve { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .btn-approve:hover { background: var(--success-color); color: white; transform: translateY(-2px); }
+        .btn-reject { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .btn-reject:hover { background: var(--warning-color); color: white; transform: translateY(-2px); }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .btn-delete:hover { background: var(--danger-color); color: white; transform: translateY(-2px); }
+
+        .fade-in-row { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* --- Detail Modal (Glassmorphism) --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 2000;
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal.show { display: flex; opacity: 1; }
+
+        .modal-box {
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 40px; 
+            width: 90%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal.show .modal-box { transform: scale(1); }
+        .modal-box h3 { margin-bottom: 25px; font-size: 1.5rem; color: white; text-align: center; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;}
+        
+        .detail-row { display: flex; margin-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 10px;}
+        .detail-row b { width: 100px; color: #a5b4fc; font-weight: 500; }
+        .detail-row span { flex: 1; color: #e2e8f0; }
+
+        .btn-modal-close { 
+            width: 100%; padding: 12px; margin-top: 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; 
+            background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); font-size: 1rem;
+        }
+        .btn-modal-close:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+<audio id="uiClickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+<audio id="uiTypeSound" src="https://assets.mixkit.co/active_storage/sfx/2569/2569-preview.mp3" preload="auto"></audio>
+
+<nav class="admin-nav">
+    <div class="logo"><i class="fa-solid fa-shield-halved"></i> LibraryBooking <span>Admin Panel</span></div>
+
+</nav>
+
+<div class="layout">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../assets/images/KMUTNB_Logo.svg.png" alt="KMUTNB Logo">
+            ระบบหลังบ้าน
+        </div>
+        
+        <a href="dashboard.html" class="click-effect"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="manage-student.html" class="click-effect"><i class="fa-solid fa-users"></i> Manage Students</a>
+        <a href="manage-admin.html" class="click-effect"><i class="fa-solid fa-user-shield"></i> Manage Admin</a>
+        <a href="manage-Booking.html" class="active click-effect"><i class="fa-regular fa-calendar-check"></i> Manage Booking</a>
+        <a href="admin_contact.html" class="click-effect"><i class="fa-regular fa-envelope-open"></i> Manage Contact</a>
+        
+        <a href="admin.html" class="logout click-effect"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
+
+    <div class="container">
+        <div class="glass-panel">
+            <div class="panel-header">
+                <h2><i class="fa-regular fa-calendar-check"></i> จัดการรายการจองห้อง (Bookings)</h2>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchContact" class="type-effect" placeholder="ค้นหา Username..." onkeyup="searchContact()">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="glass-table" id="contactTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Subject (Room)</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingTableBody">
+                        <tr><td colspan="7" style="padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="detailModal" class="modal">
+    <div class="modal-box">
+        <h3><i class="fa-solid fa-circle-info"></i> รายละเอียดการจอง</h3>
+        <div id="detailContent">
+            </div>
+        <button class="btn-modal-close click-effect" onclick="closeDetailModal()">ปิดหน้าต่าง</button>
+    </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // --- 1. ระบบเสียง ---
+    const clickSound = document.getElementById('uiClickSound');
+    const typeSound = document.getElementById('uiTypeSound');
+    clickSound.volume = 0.3; typeSound.volume = 0.05;
+
+    function playClickEffect() {
+        clickSound.currentTime = 0; clickSound.play().catch(e => console.log("Audio play blocked"));
+    }
+    function playTypeEffect() {
+        typeSound.currentTime = 0; typeSound.play().catch(e => console.log("Audio play blocked"));
+    }
+
+    let contactsData = [];
+
+    // --- 2. โหลดข้อมูลการจอง ---
+    async function loadContacts() {
+        const tbody = document.getElementById('bookingTableBody');
+        try {
+            let apiEndpoint = 'http://localhost:3000/api/getBookings';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/getBookings');
+
+            const res = await fetch(apiEndpoint);
+            const data = await res.json();
+
+            tbody.innerHTML = "";
+
+            if (!data.success || data.bookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="padding: 40px; color: #94a3b8;">ไม่มีรายการจองในระบบ</td></tr>`;
+                return;
+            }
+
+            contactsData = data.bookings;
+
+            contactsData.forEach((item, index) => {
+                const tr = document.createElement("tr");
+                tr.className = 'fade-in-row booking-row';
+                tr.style.animationDelay = `${index * 0.1}s`;
+
+                // จัดการวันที่ (ตัดเวลาออกถ้ามี)
+                const dateObj = new Date(item.date);
+                const formattedDate = dateObj.toLocaleDateString('th-TH');
+
+                // จัดการ Status Badge
+                let statusBadge = `<span class="badge badge-pending">รออนุมัติ</span>`;
+                if(item.status === 'Approved') statusBadge = `<span class="badge badge-approved">อนุมัติแล้ว</span>`;
+                if(item.status === 'Rejected') statusBadge = `<span class="badge badge-rejected">ไม่อนุมัติ</span>`;
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="booking-username">${item.username}</td>
+                    <td style="color: #cbd5e1; font-size: 0.9rem;">${item.email}</td>
+                    <td class="booking-subject">${item.subject}</td>
+                    <td>${formattedDate}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-action btn-view click-effect" onclick="showDetail(${item.id})" title="ดูรายละเอียด"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-action btn-approve click-effect" onclick="approveContact(${item.id})" title="อนุมัติ"><i class="fa-solid fa-check"></i></button>
+                            <button class="btn-action btn-reject click-effect" onclick="rejectContact(${item.id})" title="ไม่อนุมัติ"><i class="fa-solid fa-xmark"></i></button>
+                            <button class="btn-action btn-delete click-effect" onclick="deleteContact(${item.id})" title="ลบ"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // ผูกเสียงคลิกให้ปุ่มที่สร้างใหม่
+            document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="7" style="padding: 40px; color: #ef4444;">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้</td></tr>`;
+        }
+    }
+
+    // --- 3. ค้นหาผู้ใช้ ---
+    function searchContact() {
+        const input = document.getElementById('searchContact').value.toLowerCase();
+        const rows = document.querySelectorAll('.booking-row');
+
+        rows.forEach(row => {
+            const username = row.querySelector('.booking-username').textContent.toLowerCase();
+            row.style.display = username.includes(input) ? '' : 'none';
+        });
+    }
+
+    // --- 4. แสดงรายละเอียด (Modal) ---
+    function showDetail(id) {
+        const contact = contactsData.find(c => c.id === id);
+        if (!contact) return;
+
+        const dateObj = new Date(contact.date);
+        const formattedDate = dateObj.toLocaleDateString('th-TH');
+
+        const detailContent = document.getElementById('detailContent');
+        detailContent.innerHTML = `
+            <div class="detail-row"><b>Username</b> <span>${contact.username}</span></div>
+            <div class="detail-row"><b>Email</b> <span>${contact.email}</span></div>
+            <div class="detail-row"><b>Room</b> <span style="color:#60a5fa;">${contact.subject}</span></div>
+            <div class="detail-row"><b>Date</b> <span>${formattedDate}</span></div>
+            <div class="detail-row" style="border:none;"><b>Message</b> <span>${contact.message || '-'}</span></div>
+        `;
+
+        document.getElementById('detailModal').classList.add('show');
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detailModal').classList.remove('show');
+    }
+
+    // --- 5. อนุมัติ (Approve) ---
+    async function approveContact(id) {
+        const confirm = await Swal.fire({
+            title: 'อนุมัติการจอง?',
+            text: 'ระบบจะเปลี่ยนสถานะเป็น "อนุมัติแล้ว"',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'ใช่, อนุมัติ',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#10b981'
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        try {
+            let apiEndpoint = 'http://localhost:3000/api/approveBooking';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/approveBooking');
+
+            const res = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                Swal.fire('Success!', 'อนุมัติสำเร็จ', 'success');
+                loadContacts();
+            } else {
+                Swal.fire('Error', data.message || 'อนุมัติไม่สำเร็จ', 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+        }
+    }
+
+    // --- 6. ไม่อนุมัติ (Reject) ---
+    async function rejectContact(id) {
+        const confirm = await Swal.fire({
+            title: 'ไม่อนุมัติการจอง?',
+            text: 'ระบบจะเปลี่ยนสถานะเป็น "ไม่อนุมัติ"',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ใช่, ปฏิเสธ',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#f59e0b'
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        try {
+            let apiEndpoint = 'http://localhost:3000/api/rejectBooking';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/rejectBooking');
+
+            const res = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                Swal.fire('Success!', 'ปฏิเสธคำร้องสำเร็จ', 'success');
+                loadContacts();
+            } else {
+                Swal.fire('Error', data.message || 'ปฏิเสธไม่สำเร็จ', 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+        }
+    }
+
+    // --- 7. ลบข้อมูล (Delete) ---
+    async function deleteContact(id) {
+        const confirm = await Swal.fire({
+            title: 'ลบรายการจอง?',
+            text: 'ข้อมูลจะถูกลบออกจากฐานข้อมูลถาวร!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ใช่, ลบเลย',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#ef4444'
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        try {
+            let apiEndpoint = 'http://localhost:3000/api/cancel-booking';
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/cancel-booking');
+
+            const res = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId: id, student_id: "" }) // student_id ว่าง เพราะ Admin ลบได้เลย
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                Swal.fire('Deleted!', 'ลบข้อมูลสำเร็จ', 'success');
+                loadContacts();
+            } else {
+                Swal.fire('Error', data.message || 'ลบไม่ได้', 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ผูกเสียง Sidebar
+        document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+        // ผูกเสียงพิมพ์ค้นหา
+        const searchInput = document.getElementById('searchContact');
+        if(searchInput) {
+            searchInput.addEventListener('keydown', (e) => {
+                if(e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt') playTypeEffect();
+            });
+        }
+
+        // ปิด Modal เมื่อคลิกพื้นที่ว่าง
+        window.onclick = function(event) {
+            const detailModal = document.getElementById('detailModal');
+            if (event.target == detailModal) closeDetailModal();
+        }
+
+        loadContacts();
+    });
+</script>
+
+</body>
+</html>

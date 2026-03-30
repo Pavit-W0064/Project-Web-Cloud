@@ -77,7 +77,6 @@
         .contact-banner {
             position: relative; height: 450px; width: 100%;
             display: flex; align-items: center; justify-content: center;
-            /* เลือกภาพที่เหมาะกับหน้า Contact หรือใช้ภาพเดิมได้ */
             background: url('../assets/images/backimg4.jpg') no-repeat center center/cover;
             text-align: center;
         }
@@ -113,7 +112,7 @@
 
         .contact-container {
             max-width: 1100px;
-            margin: -100px auto 0; /* ดึงกล่องให้ลอยทับ Banner ขึ้นไป 100px */
+            margin: -100px auto 0;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
@@ -122,7 +121,7 @@
             z-index: 10;
             overflow: hidden;
             opacity: 0;
-            animation: slideUpFade 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s forwards; /* ดีเลย์นิดนึงให้สมูท */
+            animation: slideUpFade 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s forwards;
         }
 
         /* ฝั่งซ้าย: ข้อมูลการติดต่อ */
@@ -236,13 +235,12 @@
             <li><a href="../index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="faqs.html">FAQs</a></li>
-            <li><a href="contact.html" style="color: white;">Contact</a></li> <li><a href="admin.html">Admin</a></li>
+            <li><a href="contact.html" style="color: white;">Contact</a></li> 
+            <li><a href="admin.html">Admin</a></li>
         </ul>
 
         <div id="nav-auth-section">
-            <a href="register.html" class="btn-nav btn-glass-outline">สมัครสมาชิก</a>
-            <a href="user-login.html" class="btn-nav" style="background: var(--primary-color); color: white; box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);">เข้าสู่ระบบ</a>
-        </div>
+            </div>
     </nav>
 </header>
 
@@ -331,13 +329,14 @@
     </div>
 </footer>
 
+<script src="../js/config.js"></script> 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // --- ระบบเล่นเสียงคลิก และ เสียงตอนพิมพ์ ---
+    // --- 1. ระบบเสียง ---
     const clickSound = document.getElementById('uiClickSound');
     const typeSound = document.getElementById('uiTypeSound');
     clickSound.volume = 0.3;
-    typeSound.volume = 0.1; // ปรับเสียงพิมพ์ให้เบามากๆ เพื่อไม่ให้รำคาญ
+    typeSound.volume = 0.1;
 
     function playClickEffect() {
         clickSound.currentTime = 0; 
@@ -349,57 +348,79 @@
         typeSound.play().catch(e => console.log("Audio play blocked"));
     }
 
+    // --- 2. การกำหนด Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
-        // ผูกเสียงคลิก
         const interactiveElements = document.querySelectorAll('a, .click-effect');
         interactiveElements.forEach(el => {
             el.addEventListener('click', playClickEffect);
         });
 
-        // ผูกเสียงตอนพิมพ์ (Typing Sound)
         const typeElements = document.querySelectorAll('.type-effect');
         typeElements.forEach(el => {
             el.addEventListener('keydown', (e) => {
-                // ไม่เล่นเสียงถ้ากดปุ่ม Shift, Ctrl, Alt ค้างไว้
                 if(e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt') {
                     playTypeEffect();
                 }
             });
         });
 
-        updateAuthSection();
+        updateAuthSection(); 
     });
 
-    // --- จัดการตอนกด "ส่งข้อความ" พร้อม SweetAlert ---
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // ป้องกันไม่ให้หน้าเว็บรีเฟรช
-
+    // --- 3. จัดการฟอร์มแจ้งปัญหา (ปลอดภัยจากการแครช) ---
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); 
         playClickEffect();
         
-        // แสดง Loading อนิเมชัน
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const topic = document.getElementById('topic').value;
+        const message = document.getElementById('message').value;
+
         Swal.fire({
             title: 'กำลังส่งข้อมูล...',
             allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+            didOpen: () => { Swal.showLoading(); }
         });
 
-        // จำลองการส่งข้อมูล 1.5 วินาที แล้วค่อยแสดง Success
-        setTimeout(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'ส่งข้อความสำเร็จ!',
-                text: 'เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด ขอบคุณครับ',
-                confirmButtonColor: '#4361ee'
-            }).then(() => {
-                // ล้างข้อมูลในฟอร์ม
-                document.getElementById('contactForm').reset();
+        try {
+            // ระบบตรวจสอบ URL ให้ปลอดภัย เพื่อป้องกัน Error จาก window.apiUrl
+            let apiEndpoint = 'http://localhost:3000/api/contact'; // ค่าเริ่มต้น
+            if (typeof window.apiUrl === 'function') {
+                apiEndpoint = window.apiUrl('/api/contact');
+            }
+
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, topic, message })
             });
-        }, 1500);
+            
+            const data = await response.json();
+
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ส่งข้อความสำเร็จ!',
+                    text: 'เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด ขอบคุณครับ',
+                    confirmButtonColor: '#4361ee'
+                }).then(() => {
+                    document.getElementById('contactForm').reset();
+                });
+            } else {
+                Swal.fire('ผิดพลาด', data.message || 'ไม่สามารถส่งข้อความได้', 'error');
+            }
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'ไม่สามารถเชื่อมต่อได้',
+                text: 'โปรดตรวจสอบว่าเซิร์ฟเวอร์เปิดทำงานอยู่ หรือเช็ค URL ของ API'
+            });
+        }
     });
 
-    // ตรวจสอบสถานะล็อกอิน
+    // --- 4. อัปเดตเมนูบาร์ (Auth Section) ---
     function updateAuthSection() {
         const currentUser = localStorage.getItem('currentUser');
         const navAuthSection = document.getElementById('nav-auth-section');

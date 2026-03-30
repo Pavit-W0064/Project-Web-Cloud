@@ -671,3 +671,59 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
 
+
+
+
+// API สำหรับรับข้อมูลจากหน้า Contact
+app.post('/api/contact', (req, res) => {
+    const { name, email, topic, message } = req.body;
+
+    // เช็คว่าส่งข้อมูลมาครบไหม
+    if (!name || !email || !topic || !message) {
+        return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+    }
+
+    // นำข้อมูลบันทึกลง Database ด้วยวิธี Callback
+    const sql = "INSERT INTO contact_messages (name, email, topic, message) VALUES (?, ?, ?, ?)";
+    
+    db.query(sql, [name, email, topic, message], (error, results) => {
+        if (error) {
+            console.error("Contact API Database Error:", error);
+            // ถ้า Database มีปัญหาจริงๆ ค่อยส่ง 500
+            return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดจากฐานข้อมูล' });
+        }
+        
+        // ถ้าบันทึกสำเร็จ ส่ง success: true กลับไป
+        res.json({ success: true, message: 'ส่งข้อความสำเร็จ' });
+    });
+});
+
+
+// 1. API ดึงข้อความทั้งหมดมาแสดง (เรียงจากใหม่ไปเก่า)
+app.get('/api/messages', (req, res) => {
+    const sql = "SELECT * FROM contact_messages ORDER BY created_at DESC";
+    db.query(sql, (error, results) => {
+        if (error) return res.status(500).json({ success: false, message: 'Database error' });
+        res.json({ success: true, messages: results });
+    });
+});
+
+// 2. API อัปเดตสถานะเป็น "อ่านแล้ว" (Read)
+app.put('/api/messages/:id/read', (req, res) => {
+    const messageId = req.params.id;
+    const sql = "UPDATE contact_messages SET status = 'read' WHERE id = ?";
+    db.query(sql, [messageId], (error, results) => {
+        if (error) return res.status(500).json({ success: false, message: 'Database error' });
+        res.json({ success: true, message: 'ทำเครื่องหมายอ่านแล้ว' });
+    });
+});
+
+// 3. API ลบข้อความ (Delete)
+app.delete('/api/messages/:id', (req, res) => {
+    const messageId = req.params.id;
+    const sql = "DELETE FROM contact_messages WHERE id = ?";
+    db.query(sql, [messageId], (error, results) => {
+        if (error) return res.status(500).json({ success: false, message: 'Database error' });
+        res.json({ success: true, message: 'ลบข้อความสำเร็จ' });
+    });
+});

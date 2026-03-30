@@ -46,3 +46,12 @@ CREATE TABLE IF NOT EXISTS `queue_contact`(
     PRIMARY KEY (`id`)
 );
     
+CREATE TABLE contact_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    topic VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(50) DEFAULT 'unread', /* สถานะ: unread (ยังไม่อ่าน), read (อ่านแล้ว) */
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

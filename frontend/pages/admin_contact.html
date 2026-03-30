@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการข้อความติดต่อ - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #304ffe;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        
+        body { 
+            background: url('../assets/images/backimg1.jpg') no-repeat center center/cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            z-index: -1;
+        }
+
+        /* --- Navbar (Glass) --- */
+        .admin-nav {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logo { font-size: 1.5rem; font-weight: 700; color: white; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--warning-color); font-size: 0.9rem; margin-left: 10px; padding: 3px 8px; background: rgba(245, 158, 11, 0.2); border-radius: 5px; }
+        .btn-logout { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: white; padding: 8px 20px; border-radius: 50px; cursor: pointer; transition: 0.3s; text-decoration: none; font-size: 0.9rem;}
+        .btn-logout:hover { background: var(--danger-color); box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+
+        /* --- Layout หลัก --- */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 65px);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; padding: 30px 0;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+            animation: slideRight 0.5s ease-out forwards;
+        }
+        @keyframes slideRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+        .sidebar .logo-img { text-align: center; margin-bottom: 40px; font-size: 1.2rem; font-weight: 600; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .sidebar .logo-img img { width: 120px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px; }
+        .sidebar a { padding: 15px 30px; color: #cbd5e1; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 15px; transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .sidebar a:hover { background: rgba(255, 255, 255, 0.1); color: white; border-left-color: var(--primary-color); }
+        .sidebar a.active { background: linear-gradient(90deg, rgba(67, 97, 238, 0.2) 0%, transparent 100%); color: white; border-left-color: var(--primary-color); }
+        .sidebar a.logout { margin-top: auto; color: #fca5a5; }
+        .sidebar a.logout:hover { background: rgba(239, 68, 68, 0.2); color: white; border-left-color: var(--danger-color); }
+
+        /* --- Main Content --- */
+        .container { flex: 1; padding: 40px; overflow-y: auto; }
+
+        /* --- Glass Panel --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 20px; padding: 30px;
+            animation: slideUpFade 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0; transform: translateY(40px);
+        }
+        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+        }
+        .panel-header h2 { font-weight: 600; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        
+        .btn-refresh { 
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; 
+            padding: 8px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-refresh:hover { background: white; color: var(--text-dark); transform: translateY(-2px); }
+
+        /* --- Data Table --- */
+        .table-responsive { overflow-x: auto; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-table th { font-weight: 500; color: #a5b4fc; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+        .glass-table tbody tr { transition: background 0.3s; }
+        .glass-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .td-message { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #e2e8f0; }
+        .date-text { font-size: 0.85rem; color: #cbd5e1; }
+
+        /* --- Status Badges --- */
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; display: inline-block;}
+        .badge-unread { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-read { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+        /* --- Action Buttons --- */
+        .action-btns { display: flex; gap: 8px; }
+        .btn-action { 
+            width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; 
+            display: flex; justify-content: center; align-items: center; transition: 0.3s; color: white; 
+        }
+        .btn-view { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .btn-view:hover { background: #38bdf8; color: white; transform: translateY(-2px); }
+        .btn-read { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .btn-read:hover { background: var(--success-color); color: white; transform: translateY(-2px); }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .btn-delete:hover { background: var(--danger-color); color: white; transform: translateY(-2px); }
+
+        .fade-in-row { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+<audio id="uiClickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+<nav class="admin-nav">
+    <div class="logo"><i class="fa-solid fa-shield-halved"></i> LibraryBooking <span>Admin Panel</span></div>
+
+</nav>
+
+<div class="layout">
+    <div class="sidebar">
+        <div class="logo-img">
+            <img src="../assets/images/KMUTNB_Logo.svg.png" alt="KMUTNB Logo">
+            ระบบหลังบ้าน
+        </div>
+        
+        <a href="dashboard.html" class="click-effect"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="manage-student.html" class="click-effect"><i class="fa-solid fa-users"></i> Manage Students</a>
+        <a href="manage-admin.html" class="click-effect"><i class="fa-solid fa-user-shield"></i> Manage Admin</a>
+        <a href="manage-Booking.html" class="click-effect"><i class="fa-regular fa-calendar-check"></i> Manage Booking</a>
+        <a href="admin_contact.html" class="active click-effect"><i class="fa-regular fa-envelope-open"></i> Manage Contact</a>
+        
+        <a href="admin.html" class="logout click-effect"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
+
+    <div class="container">
+        <div class="glass-panel">
+            <div class="panel-header">
+                <h2><i class="fa-regular fa-comments"></i> กล่องข้อความแจ้งปัญหา (Contact)</h2>
+                <button class="btn-refresh click-effect" onclick="loadMessages()"><i class="fa-solid fa-arrows-rotate"></i> รีเฟรชข้อมูล</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>วันที่ / เวลา</th>
+                            <th>ชื่อผู้ติดต่อ</th>
+                            <th>หัวข้อ</th>
+                            <th>ข้อความเบื้องต้น</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messageTableBody">
+                        <tr><td colspan="6" style="text-align: center; padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../js/config.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // --- 1. ระบบเสียงคลิก ---
+    const clickSound = document.getElementById('uiClickSound');
+    clickSound.volume = 0.3;
+
+    function playClickEffect() {
+        clickSound.currentTime = 0; 
+        clickSound.play().catch(e => console.log("Audio play blocked"));
+    }
+
+    // --- 2. ฟังก์ชันโหลดข้อมูลข้อความ ---
+    async function loadMessages() {
+        const tbody = document.getElementById('messageTableBody');
+        
+        try {
+            // ดึงข้อมูล (รองรับการใช้ window.apiUrl)
+            let apiEndpoint = 'http://localhost:3000/api/messages'; 
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl('/api/messages');
+
+            const response = await fetch(apiEndpoint);
+            const data = await response.json();
+
+            tbody.innerHTML = ''; // ล้างข้อมูลเก่า
+
+            if (data.success && data.messages.length > 0) {
+                data.messages.forEach((msg, index) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'fade-in-row';
+                    tr.style.animationDelay = `${index * 0.1}s`; 
+
+                    // จัดการวันที่
+                    const dateObj = new Date(msg.created_at);
+                    const formattedDate = dateObj.toLocaleDateString('th-TH') + ' ' + dateObj.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
+
+                    // แปลงหัวข้อ (Topic) ให้เป็นภาษาไทย
+                    let topicThai = msg.topic;
+                    if(msg.topic === 'equipment') topicThai = 'อุปกรณ์ชำรุด';
+                    if(msg.topic === 'system') topicThai = 'ปัญหาระบบจอง';
+                    if(msg.topic === 'noise') topicThai = 'เสียงดังรบกวน';
+                    if(msg.topic === 'other') topicThai = 'อื่นๆ';
+
+                    // จัดการป้ายสถานะ
+                    let statusBadge = msg.status === 'unread' 
+                        ? `<span class="badge badge-unread"><i class="fa-solid fa-circle-exclamation"></i> ยังไม่อ่าน</span>` 
+                        : `<span class="badge badge-read"><i class="fa-solid fa-check-double"></i> อ่านแล้ว</span>`;
+
+                    // ปรับแต่งสีพื้นหลังของแถวที่อ่านแล้วให้หม่นลงนิดหน่อย
+                    if(msg.status !== 'unread') {
+                        tr.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                    }
+
+                    tr.innerHTML = `
+                        <td><div class="date-text">${formattedDate}</div></td>
+                        <td style="font-weight: 500;">${msg.name}<br><span style="font-size: 0.8rem; color: #94a3b8;">${msg.email}</span></td>
+                        <td style="color: #cbd5e1;">${topicThai}</td>
+                        <td class="td-message">${msg.message}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-action btn-view click-effect" title="ดูรายละเอียดข้อความ" onclick="viewMessage('${msg.name}', '${msg.message}', '${msg.email}')"><i class="fa-solid fa-eye"></i></button>
+                                ${msg.status === 'unread' ? `<button class="btn-action btn-read click-effect" title="ทำเครื่องหมายว่าอ่านแล้ว" onclick="markAsRead(${msg.id})"><i class="fa-solid fa-check"></i></button>` : ''}
+                                <button class="btn-action btn-delete click-effect" title="ลบข้อความ" onclick="deleteMessage(${msg.id})"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">ไม่มีข้อความติดต่อในระบบ</td></tr>`;
+            }
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: #ef4444;">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้</td></tr>`;
+        }
+
+        // ผูกเสียงให้ปุ่มที่เพิ่งสร้าง
+        document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+    }
+
+    // --- 3. ฟังก์ชันดูรายละเอียดข้อความเต็ม ---
+    function viewMessage(name, message, email) {
+        Swal.fire({
+            title: `ข้อความจาก: ${name}`,
+            html: `
+                <div style="text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px; color: #333;">
+                    <p style="margin-bottom: 10px; font-size: 0.9rem;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                    <p style="line-height: 1.6; font-size: 1rem;">${message.replace(/\n/g, '<br>')}</p>
+                </div>
+            `,
+            icon: 'info',
+            confirmButtonColor: '#4361ee',
+            confirmButtonText: 'ปิดหน้าต่าง'
+        });
+    }
+
+    // --- 4. ฟังก์ชันทำเครื่องหมาย "อ่านแล้ว" ---
+    async function markAsRead(id) {
+        try {
+            let apiEndpoint = `http://localhost:3000/api/messages/${id}/read`;
+            if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl(`/api/messages/${id}/read`);
+
+            const response = await fetch(apiEndpoint, { method: 'PUT' });
+            const data = await response.json();
+            
+            if(data.success) {
+                loadMessages(); 
+            }
+        } catch (error) {
+            Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+        }
+    }
+
+    // --- 5. ฟังก์ชันลบข้อความ ---
+    function deleteMessage(id) {
+        Swal.fire({
+            title: 'ยืนยันการลบ?',
+            text: "ข้อความนี้จะถูกลบออกจากฐานข้อมูลอย่างถาวร!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ลบเลย!',
+            cancelButtonText: 'ยกเลิก'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    let apiEndpoint = `http://localhost:3000/api/messages/${id}`;
+                    if (typeof window.apiUrl === 'function') apiEndpoint = window.apiUrl(`/api/messages/${id}`);
+
+                    const response = await fetch(apiEndpoint, { method: 'DELETE' });
+                    const data = await response.json();
+
+                    if(data.success) {
+                        Swal.fire('ลบสำเร็จ!', 'ข้อความถูกลบแล้ว', 'success');
+                        loadMessages();
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ผูกเสียงคลิกกับเมนู Sidebar
+        document.querySelectorAll('.click-effect').forEach(el => el.addEventListener('click', playClickEffect));
+        
+        loadMessages(); // โหลดข้อมูลทันที
+    });
+</script>
+
+</body>
+</html>
