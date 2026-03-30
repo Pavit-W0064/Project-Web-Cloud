@@ -19,7 +19,7 @@ http://127.0.0.1:3000/
 - หน้าเข้าสู่ระบบแล้วจองห้องสำหรับอ่านหนังสือ (ตรงสมัครสมาชิกจะเป็นการเพิ่มข้อมูลSQL)
 
 [backend]
-- Admin
+- Admin (admin@gmail.com , 1234)
 - หน้า Dashboard
 - จัดการระบบหลังบ้านสามารถ Insert, Delete, Update, Search ข้อมูลได้
 - Approve , Reject การจองของนักศึกษาได้
