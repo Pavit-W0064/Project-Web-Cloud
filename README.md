@@ -19,6 +19,7 @@ http://127.0.0.1:3000/
 
 [backend]
 - Admin
+- หน้า Dashboard
 - จัดการระบบหลังบ้านสามารถ Insert, Delete, Update, Search ข้อมูลได้
-
+- Approve , Reject การจองของนักศึกษาได้
 
