@@ -1,5 +1,4 @@
-![Uploading สกรีนช็อต 2026-03-30 190831.png…]()
-
+<img width="1902" height="705" alt="สกรีนช็อต 2026-03-30 190831" src="https://github.com/user-attachments/assets/43007115-c23e-4c90-94b7-867830a861ab" />
 💖 How to use code files from GitHub
 
 - use git clone
