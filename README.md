@@ -5,6 +5,8 @@
 - use git clone
 - open Project
 - open XAMPP
+  1. CREATE DATABASE queue_db;
+  2. import เลือกไฟล์ eiei.sql
 - C:\Project Cloud\Project-Web-Cloud\backend>node server.js
 
 Localhost (XAMPP)
