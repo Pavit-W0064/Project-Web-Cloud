@@ -251,11 +251,12 @@ app.post('/api/book-room', (req, res) => {
         return res.json({ success: false, message: "สามารถจองล่วงหน้าได้เพียง 7 วันเท่านั้น" });
     }
 
-    // ตรวจสอบว่าผู้ใช้คนนี้มีการจองที่ยังใช้งานอยู่แล้วหรือไม่ (status = Pending)
+    // 1. ตรวจสอบว่าผู้ใช้คนนี้มีการจองที่ยัง "ใช้งานอยู่" แล้วหรือไม่ (กันจองซ้ำ)
+    // *แก้ไขให้ครอบคลุมสถานะเริ่มต้นทั้งหมด (NULL, ว่าง, จองแล้ว, Pending, Approved)*
     const checkUserBookingSql = `
         SELECT * FROM queue_contact
         WHERE email = ?
-        AND status IN ('Pending','Approved')
+        AND (status IS NULL OR status = '' OR status = 'จองแล้ว' OR status = 'Pending' OR status = 'Approved')
     `;
     
     console.log('[DEBUG] Checking booking for student_id:', student_id);
@@ -263,61 +264,60 @@ app.post('/api/book-room', (req, res) => {
     db.query(checkUserBookingSql, [student_id], (err, userBookings) => {
         if (err) {
             console.error('[ERROR] book-room checkUserBookingSql failed:', err);
-            return res.json({ success: false, message: "เกิดข้อผิดพลาด" });
+            return res.json({ success: false, message: "เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์" });
         }
-
-        console.log('[DEBUG] Existing bookings found:', userBookings.length);
         
+        // ถ้าพบว่ามีคิวที่ยังแอคทีฟอยู่ ให้บล็อคการจองทันที
         if (userBookings.length > 0) {
             console.log('[DEBUG] User already has booking:', userBookings);
             return res.json({
                 success: false,
-                message: "คุณมีการจองที่ยังใช้งานอยู่ ไม่สามารถจองซ้ำได้ กรุณายกเลิกการจองเดิมก่อน"
+                message: "คุณมีการจองที่ยังใช้งานอยู่ (จำกัด 1 คน/1 สิทธิ์) กรุณายกเลิกการจองเดิมก่อนทำรายการใหม่"
             });
         }
 
-    const checkSql = `
-        SELECT * FROM queue_contact
-        WHERE subject = ? AND date = ? AND message = ?
-    `;
-
-    db.query(checkSql, [room, date, timeSlot], (err, result) => {
-        if (err) {
-            console.error('[ERROR] book-room checkSql failed:', err);
-            return res.json({ success: false });
-        }
-
-        if (result.length > 0) {
-            return res.json({
-                success: false,
-                message: "ห้องถูกจองแล้ว"
-            });
-        }
-
-            // we don't have a `status` column in the original table scheme,
-        // so only insert the fields that actually exist.  the front‑end will
-        // assume "จองแล้ว" when `status` is missing.
-        const insertSql = `
-            INSERT INTO queue_contact
-            (username, email, subject, message, date)
-            VALUES (?, ?, ?, ?, ?)
+        // 2. ตรวจสอบว่าห้องและเวลานี้ถูกคนอื่นจองไปแล้วหรือยัง
+        // *แก้ไข: ถ้าคิวเก่าสถานะเป็น Rejected หรือ ยกเลิกไปแล้ว ให้ถือว่าห้องว่างและจองซ้อนได้*
+        const checkSql = `
+            SELECT * FROM queue_contact
+            WHERE subject = ? AND date = ? AND message = ?
+            AND (status IS NULL OR status = '' OR status = 'จองแล้ว' OR status = 'Pending' OR status = 'Approved')
         `;
 
-        db.query(insertSql, [name, student_id, room, timeSlot, date], (err2) => {
-            if (err2) {
-                console.error('[ERROR] book-room insert failed:', err2);
-                return res.json({ success: false, message: "บันทึกไม่ได้"  });
+        db.query(checkSql, [room, date, timeSlot], (err, result) => {
+            if (err) {
+                console.error('[ERROR] book-room checkSql failed:', err);
+                return res.json({ success: false, message: "เกิดข้อผิดพลาดในการตรวจสอบห้อง" });
             }
 
-            res.json({ 
-                success: true,
-                booking: { name, student_id, room, date, timeSlot }
+            if (result.length > 0) {
+                return res.json({
+                    success: false,
+                    message: "ห้องและช่วงเวลานี้ถูกจองไปแล้ว กรุณาเลือกเวลาอื่น"
+                });
+            }
+
+            // 3. บันทึกข้อมูลการจอง โดย "บังคับใส่สถานะ" เริ่มต้นเป็น 'Pending' เพื่อให้ระบบเช็คได้แม่นยำ
+            const insertSql = `
+                INSERT INTO queue_contact
+                (username, email, subject, message, date, status)
+                VALUES (?, ?, ?, ?, ?, 'Pending')
+            `;
+
+            db.query(insertSql, [name, student_id, room, timeSlot, date], (err2) => {
+                if (err2) {
+                    console.error('[ERROR] book-room insert failed:', err2);
+                    return res.json({ success: false, message: "บันทึกไม่ได้"  });
+                }
+
+                res.json({ 
+                    success: true,
+                    booking: { name, student_id, room, date, timeSlot }
+                });
             });
         });
     });
-    });
 });
-
 
 // ==========================================
 // GET BOOKINGS

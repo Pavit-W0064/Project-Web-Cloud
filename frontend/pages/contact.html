@@ -334,19 +334,15 @@
 <script>
     // --- 1. ระบบเสียง ---
     const clickSound = document.getElementById('uiClickSound');
-    const typeSound = document.getElementById('uiTypeSound');
+    
     clickSound.volume = 0.3;
-    typeSound.volume = 0.1;
+    
 
     function playClickEffect() {
         clickSound.currentTime = 0; 
         clickSound.play().catch(e => console.log("Audio play blocked"));
     }
 
-    function playTypeEffect() {
-        typeSound.currentTime = 0;
-        typeSound.play().catch(e => console.log("Audio play blocked"));
-    }
 
     // --- 2. การกำหนด Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {

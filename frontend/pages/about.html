@@ -110,7 +110,6 @@
             color: white;
             padding: 0 20px;
             margin-top: 50px;
-            /* เพิ่ม Animation แบบเดียวกับหน้า Home */
             animation: slideUpFade 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
             opacity: 0;
         }
@@ -141,14 +140,14 @@
            Team Section 
            ========================================= */
         .team-section {
-            padding: 80px 5%;
+            /* ปรับ padding ซ้ายขวาให้น้อยลง เพื่อให้มีพื้นที่ตรงกลางมากขึ้น */
+            padding: 80px 2%;
             background-color: #f8f9fa;
         }
 
         .section-header {
             text-align: center;
             margin-bottom: 60px;
-            /* Animation สำหรับ Header */
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.8s ease;
@@ -179,22 +178,22 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 35px;
-            max-width: 1300px;
+            /* ปรับลด gap ลงนิดหน่อย และขยาย max-width ให้รองรับ 5 กล่องได้ */
+            gap: 25px;
+            max-width: 1500px; 
             margin: 0 auto;
         }
 
         /* การ์ดทีมดีไซน์ใหม่ */
         .card {
             background: white;
-            width: 260px;
+            width: 260px; /* ขนาดการ์ดเท่าเดิม */
             border-radius: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             overflow: hidden;
             text-align: center;
             border: 1px solid rgba(0,0,0,0.03);
             
-            /* Animation ค่อยๆ โผล่ขึ้นมา (Staggered Fade In) */
             opacity: 0;
             transform: translateY(40px);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -205,7 +204,6 @@
             transform: translateY(0);
         }
 
-        /* เอฟเฟกต์ตอน Hover แยกออกมาเพื่อให้ไม่ตีกับ Animation ตอนโหลด */
         .card.visible:hover {
             transform: translateY(-15px);
             box-shadow: 0 20px 40px rgba(67, 97, 238, 0.15);
@@ -219,7 +217,6 @@
             position: relative;
         }
 
-        /* ไล่สีทับรูปนิดนึงให้ดูมีมิติ */
         .card-img-wrapper::after {
             content: '';
             position: absolute;
@@ -243,19 +240,19 @@
             position: relative;
             background: white;
             border-radius: 20px 20px 0 0;
-            margin-top: -15px; /* ดึงให้กล่องข้อความทับรูปภาพนิดนึง */
+            margin-top: -15px; 
             z-index: 2;
         }
 
         .card h3 {
-            font-size: 1.2rem;
+            font-size: 1.15rem; /* ปรับขนาดฟอนต์ชื่อลงนิดนึงกันชื่อยาวล้น */
             color: var(--text-dark);
             margin-bottom: 5px;
             font-weight: 600;
         }
 
         .position {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #64748b;
             margin-bottom: 25px;
             font-weight: 400;
@@ -336,7 +333,8 @@
 
         <ul class="nav-links">
             <li><a href="../index.html">Home</a></li>
-            <li><a href="about.html" style="color: white;">About</a></li> <li><a href="faqs.html">FAQs</a></li>
+            <li><a href="about.html" style="color: white;">About</a></li> 
+            <li><a href="faqs.html">FAQs</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="admin.html">Admin</a></li>
         </ul>
@@ -458,11 +456,9 @@
     }
 
     // --- Scroll Animation ---
-    // ฟังก์ชันตรวจสอบว่า Element เลื่อนมาอยู่ในหน้าจอหรือยัง
     function checkReveal() {
-        const triggerBottom = window.innerHeight / 5 * 4.5; // จุดที่จะให้เริ่มแสดงผล (ประมาน 90% ของหน้าจอ)
+        const triggerBottom = window.innerHeight / 5 * 4.5; 
 
-        // สำหรับหัวข้อ Section
         const headerElement = document.querySelector('.reveal-element');
         if(headerElement) {
             const elementTop = headerElement.getBoundingClientRect().top;
@@ -471,36 +467,29 @@
             }
         }
 
-        // สำหรับการ์ด (แสดงทีละใบ delay นิดนึงให้ดูสมูท)
         const cards = document.querySelectorAll('.reveal-card');
         cards.forEach((card, index) => {
             const cardTop = card.getBoundingClientRect().top;
             if(cardTop < triggerBottom) {
                 setTimeout(() => {
                     card.classList.add('visible');
-                }, index * 150); // ดีเลย์การ์ดละ 0.15 วิ
+                }, index * 150); 
             }
         });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // ผูกเสียงคลิกกับปุ่ม
         const interactiveElements = document.querySelectorAll('button, a, .btn-ig');
         interactiveElements.forEach(el => {
             el.addEventListener('click', playClickEffect);
         });
 
-        // ดึงข้อมูล User
         updateAuthSection();
-
-        // ตรวจสอบ Animation ตอนโหลดหน้าเว็บครั้งแรก (เผื่อการ์ดอยู่ในจออยู่แล้ว)
         checkReveal();
     });
 
-    // ตรวจสอบ Animation เวลามีการเลื่อนหน้าจอ
     window.addEventListener('scroll', checkReveal);
 
-    // ตรวจสอบและแสดงสถานะล็อกอิน
     function updateAuthSection() {
         const currentUser = localStorage.getItem('currentUser');
         const navAuthSection = document.getElementById('nav-auth-section');
