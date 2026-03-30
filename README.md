@@ -17,10 +17,12 @@ http://127.0.0.1:3000/
 
 [frontend]
 - User
+- Home, About, FAQs, Contact, Admin(เข้าbackend)
 - หน้าเข้าสู่ระบบแล้วจองห้องสำหรับอ่านหนังสือ (ตรงสมัครสมาชิกจะเป็นการเพิ่มข้อมูลSQL)
 
 [backend]
 - Admin (User : admin@gmail.com , Password : 1234)
+- Dashboard, Manage Students, Manage Admin, Manage Booking, Manage Contact
 - หน้า Dashboard
 - จัดการระบบหลังบ้านสามารถ Insert, Delete, Update, Search ข้อมูลได้
 - Approve , Reject การจองของนักศึกษาได้
